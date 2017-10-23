@@ -1,0 +1,23 @@
+{
+    "app": {
+        "http": {
+            "port": 5000
+        }
+    },
+
+    "db": {
+        "mongo": {
+            "path": "your mongo path"
+        }
+    },
+
+    "crypto": {
+        "sha256": {
+            "secret": "YOURSHA256SECRETKEY"
+        },
+
+        "aes256": {
+            "secret": "YOURAES256SECRETKEY"
+        }
+    }
+}
