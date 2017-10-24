@@ -1,7 +1,7 @@
 {
-  "name": "koa-js-quickstart",
+  "name": "pork-and-fork-api-server",
   "version": "1.0.0",
-  "description": "quickstart for koa.js",
+  "description": "http and socket.io api server in 'pork-and-fork'",
   "main": "index.js",
   "author": "garam",
   "license": "MIT",
@@ -9,9 +9,8 @@
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.2.1",
-    "koa-send": "^4.1.1",
-    "koa-static": "^4.0.1",
     "koa2-cors": "^2.0.3",
-    "mongoose": "^4.12.3"
+    "mongoose": "^4.12.4",
+    "socket.io": "^2.0.4"
   }
 }
