@@ -7,10 +7,26 @@
     </head>
     
     <body>
-        Sign In Page
+        <h1>Sign In</h1>
+        
+        <form id="sign-in-form">
+            <div>
+                <input type="text" name="id" placeholder="Id" id="sign-in-id-text">
+            </div>
+            
+            <div>
+                <input type="password" name="password" placeholder="Password" id="sign-in-password-text">
+            </div>
 
-        <script type="text/javascript">
-            const socket = io.connect("http://localhost:5000/socket.io");
-        </script>
+            <div>
+                <a href="/signup">Sign Up</a>
+            </div>
+
+            <div>
+                <input type="submit" value="Sign In" id="sign-in-submit-btn">
+            </div>
+        </form>
+
+        <script type="text/javascript" src="../static/js/sign-in.js"></script>
     </body>
 </html>
