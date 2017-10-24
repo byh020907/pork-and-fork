@@ -7,10 +7,24 @@
     </head>
     
     <body>
-        Sign Up Page
+        <h1>Sign Up</h1>
 
-        <script type="text/javascript">
-            const socket = io.connect("http://localhost:5000/socket.io");
-        </script>
+        <form id="sign-up-form">
+            <div>
+                <input type="text" name="id" placeholder="Id" id="sign-up-id-text">
+            </div>
+                
+            <div>
+                <input type="password" name="password" placeholder="Password" id="sign-up-password-text">
+            </div>
+    
+            <div>
+                <input type="text" name="name" placeholder="Name" id="sign-up-name-text">
+            </div>
+
+            <div>
+                <input type="submit" value="Sign Up" id="sign-up-submit-btn">
+            </div>
+        </form>
     </body>
 </html>
