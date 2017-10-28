@@ -1,8 +1,10 @@
 const Log = require("../../support/log");
 
 module.exports = () => {
-    return async (packet, next) => {
-        console.log(packet);
-        await next();
+    return (packet, next) => {
+        const [ event, frame ] = packet;
+
+        Log("EVENT", `${ event } ${ JSON.stringify(frame) }`);
+        next();
     };
 };
