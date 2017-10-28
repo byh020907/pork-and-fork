@@ -1,2 +1,2 @@
-const config = require("../../config");
-module.exports = config;
+const Config = require("../../config");
+module.exports = Config;

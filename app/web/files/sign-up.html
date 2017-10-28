@@ -3,28 +3,17 @@
     <head>
         <meta charset="utf-8">
         <title>Sign Up</title>
-        <script type="text/javascript" src="http://localhost:5000/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="/static/css/sign-up.css">
     </head>
     
     <body>
-        <h1>Sign Up</h1>
-
         <form id="sign-up-form">
-            <div>
-                <input type="text" name="id" placeholder="Id" id="sign-up-id-text">
-            </div>
-                
-            <div>
-                <input type="password" name="password" placeholder="Password" id="sign-up-password-text">
-            </div>
-    
-            <div>
-                <input type="text" name="name" placeholder="Name" id="sign-up-name-text">
-            </div>
-
-            <div>
-                <input type="submit" value="Sign Up" id="sign-up-submit-btn">
-            </div>
+            <input type="text" name="id" placeholder="Id" id="sign-up-id-text">
+            <input type="password" name="password" placeholder="Password" id="sign-up-password-text">
+            <input type="text" name="name" placeholder="Name" id="sign-up-name-text">
+            <input type="submit" value="Sign Up" id="sign-up-submit-btn">
         </form>
+
+        <script type="text/javascript" src="../static/js/sign-up.js"></script>
     </body>
 </html>
