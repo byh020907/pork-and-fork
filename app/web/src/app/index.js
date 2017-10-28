@@ -13,7 +13,7 @@ app.use(Logger());
 app.use(Mount("/static", Serve("./files")));
 
 router.get("/", async (ctx) => {
-    await Send(ctx, "index.html", { root: "./files" });
+    await Send(ctx, "main.html", { root: "./files" });
 });
 
 router.get("/signin", async (ctx) => {

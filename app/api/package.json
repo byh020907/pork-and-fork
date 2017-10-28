@@ -6,6 +6,9 @@
   "author": "garam",
   "license": "MIT",
   "dependencies": {
+    "fs.promised": "^3.0.0",
+    "joi": "^13.0.1",
+    "jsonwebtoken": "^8.1.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.2.1",

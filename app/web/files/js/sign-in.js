@@ -5,7 +5,7 @@ signInForm.addEventListener("submit", (e) => {
 
     const { id, password } = e.target.elements;
     
-    signIn(id, password, (status) => {
+    signIn(id.value, password.value, (status) => {
         if (status === 200) {
             location.href = "/";
         } else {
@@ -26,5 +26,5 @@ function signIn(id, password, callback) {
     xhr.open("POST", "http://localhost:5000/api/auth/signin", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    xhr.send(`id=${ id.value }&password=${ password.value }`);
+    xhr.send(`id=${ id }&password=${ password }`);
 }

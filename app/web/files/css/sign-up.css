@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+
+#sign-up-form {
+    width: 80%;
+    margin: 0px auto;
+    padding: 32px;
+    text-align: center;
+}
+
+#sign-up-form * {
+    margin: 16px auto;
+    display: block;
+}
+
+#sign-up-form input {
+    width: 80%;
+    padding: 12px;
+    font-size: 12pt;
+}
+
+#sign-up-submit-btn {
+    margin-top: 48px;
+}
