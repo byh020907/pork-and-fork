@@ -16,14 +16,6 @@ router.get("/", async (ctx) => {
     await Send(ctx, "main.html", { root: "./files" });
 });
 
-router.get("/signin", async (ctx) => {
-    await Send(ctx, "sign-in.html", { root: "./files" });
-});
-
-router.get("/signup", async (ctx) => {
-    await Send(ctx, "sign-up.html", { root: "./files" });
-});
-
 app.use(router.routes());
 app.use(router.allowedMethods());
 
