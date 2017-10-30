@@ -29,14 +29,18 @@ Account.statics.validate = function({ id, password, name }) {
 };
 
 Account.methods.decrypt = function() {
-    this.id = AES256.decrypt(this.id);
-    this.name = AES256.decrypt(this.name);
+    const { id, name } = this;
+
+    this.id = AES256.decrypt(id);
+    this.name = AES256.decrypt(name);
 };
 
 Account.methods.encrypt = function() {
-    this.id = AES256.encrypt(this.id);
-    this.password = SHA256.encrypt(this.password);
-    this.name = AES256.encrypt(this.name);
+    const { id, password, name } = this;
+
+    this.id = AES256.encrypt(id);
+    this.password = SHA256.encrypt(password);
+    this.name = AES256.encrypt(name);
 };
 
 const account = Mongoose.model('Account', Account);

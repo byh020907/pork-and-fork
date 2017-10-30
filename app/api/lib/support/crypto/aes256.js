@@ -12,9 +12,9 @@ exports.encrypt = (text) => {
 };
 
 exports.decrypt = (text) => {
-    const deCipher = Crypto.createDeCipher("aes-256-cbc", secret);
+    const deCipher = Crypto.createDecipher("aes-256-cbc", secret);
     let result = deCipher.update(text, "hex", "utf-8");
 
-    result += cipher.final("utf-8");
+    result += deCipher.final("utf-8");
     return result;
 };
