@@ -21,6 +21,10 @@ io.on("connection", (socket) => {
         Auth.login(socket, frame, ack);
     });
 
+    socket.on("room.create", (frame, ack) => {
+        Room.create(socket, frame, ack);
+    });
+
     socket.on("room.chat", (frame, ack) => {
         Room.chat(socket, frame, ack);
     });
