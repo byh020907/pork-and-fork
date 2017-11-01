@@ -1,6 +1,6 @@
 const Socket = require("socket.io");
 const Log = require("../../../lib/support/log");
-const Logger = require("../../../lib/middleware/log");
+const Logger = require("../../../lib/middleware/logger");
 const Auth = require("./auth");
 const Room = require("./room");
 

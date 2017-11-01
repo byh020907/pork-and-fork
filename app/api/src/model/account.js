@@ -1,12 +1,16 @@
 const Joi = require("joi");
-const Mongoose = require("../../lib/utilities/mongoose");
+const Mongoose = require("../../lib/utility/mongoose");
 const AES256 = require("../../lib/support/crypto/aes256");
 const SHA256 = require("../../lib/support/crypto/sha256");
 
 const { Schema } = Mongoose;
 
 const Account = new Schema({
-    id: String,
+    id: { 
+        type: String, 
+        unique: true 
+    },
+
     password: String,
     name: String
 });

@@ -1,9 +1,9 @@
 const Crypto = require("crypto");
 const Config = require("../config");
 
-const { crypto: { sha256: { secret } } } = Config;
+const { secret } = Config.crypto.sha256;
 
 exports.encrypt = (text) => {
-    Crypto.createHmac("sha256", secret).update(text).digest("hex");
-    return text; 
+    let result = Crypto.createHmac("sha256", secret).update(text).digest("hex");
+    return result; 
 };

@@ -8,7 +8,8 @@ const connect = async (mongoose, path, option) => {
     try {
         await Mongoose.connect(`mongodb://${ path }`, option);
     } catch (e) {
-        return Log("ERROR", `failed to connect mongo ${ JSON.stringify({ reason: e.message }) }`);
+        Log("ERROR", `failed to connect mongo because ${ e.message }`);
+        return console.error(e);
     }
 
     Log("INFO", `connected mongo at ${ path }`);

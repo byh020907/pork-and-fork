@@ -1,44 +1,7 @@
+@import url("./chat.css");
+@import url("./login.css");
+@import url("./register.css");
+
 * {
     box-sizing: border-box;
-}
-
-#chat-message-form {
-    width: 80%;
-    margin: 0px auto;
-    display: block;
-    text-align: center;
-}
-
-#chat-message-form * {
-    display: inline-block;
-}
-
-#chat-message-form input {
-    margin: 7.5% auto;
-    padding: 8px;
-}
-
-#chat-message-text {
-    width: 77.5%;
-}
-
-#chat-message-submit-btn {
-    width: 7.5%;
-}
-
-#chat-message-list {
-    width: 80%;
-    height: 320px;
-    border: 1px solid #000000;
-    border-radius: 8px;
-    margin: 0px auto;
-    padding: 32px;
-    display: block;
-    list-style: none;
-    text-align: center;
-    overflow-y: scroll;
-}
-
-.chat-message-list-item {
-    margin: 24px auto;
 }

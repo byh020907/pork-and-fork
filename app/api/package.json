@@ -1,10 +1,13 @@
 {
   "name": "pnf-api-server",
   "version": "1.0.0",
-  "description": "socket.io api server for pork and fork",
+  "description": "socket.io api server for PNF(Pork aNd Fork)",
   "main": "index.js",
   "author": "dongly",
   "license": "MIT",
+  "scripts": {
+    "start": "node src"
+  },
   "dependencies": {
     "fs.promised": "^3.0.0",
     "joi": "^13.0.1",
