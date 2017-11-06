@@ -6,6 +6,6 @@ const app = new Koa();
 
 const server = HTTP.createServer(app.callback());
 
-IO.attach(server);
+IO.attach(server, { cookie: false });
 
 module.exports = server;

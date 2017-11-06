@@ -11,7 +11,9 @@ io.on("connection", (socket) => {
 
     socket.use(Logger());
 
-    socket.broadcast.emit("room.join", { member: socket.id });
+    const { adapter } = io.sockets;
+
+    socket.adapter = adapter;
 
     socket.on("auth.register", (frame, ack) => {
         Auth.register(socket, frame, ack);
@@ -25,14 +27,30 @@ io.on("connection", (socket) => {
         Room.create(socket, frame, ack);
     });
 
+    socket.on("room.list", (frame, ack) => {
+        Room.list(socket, ack);
+    });
+
+    socket.on("room.join", (frame, ack) => {
+        Room.join(socket, frame, ack);
+    });
+
+    socket.on("room.quit", (frame, ack) => {
+        Room.quit(socket, ack);
+    });
+
     socket.on("room.chat", (frame, ack) => {
         Room.chat(socket, frame, ack);
     });
 
     socket.on("disconnect", () => {
         Log("INFO", `a socket ${ socket.id } disconnected`);
-        
-        socket.broadcast.emit("room.quit", { member: socket.id });
+
+        const { user, room } = socket;
+
+        if (user && room) {
+            socket.to(room.name).emit("room.quit", { member: user.id });
+        }
     });
 });
 

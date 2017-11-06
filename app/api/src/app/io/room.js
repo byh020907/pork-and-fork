@@ -1,15 +1,14 @@
 const Log = require("../../../lib/support/log");
 
 exports.create = (socket, frame, ack) => {
-    const { user } = socket;
+    const { user, adapter: { rooms } } = socket;
+    const { name } = frame;
 
     if (!user) {
         return ack(false, { reason: "Not Authorized" });
     }
 
-    const { name } = frame;
-
-    if (socket.rooms[name]) {
+    if (rooms[name]) {
         return ack(false, { reason: "Duplicated Room Name" });
     }
 
@@ -17,37 +16,121 @@ exports.create = (socket, frame, ack) => {
         socket.join(name);
     } catch (e) {
         ack(false, { reason: e.message });
-        Log("ERROR", `failed to create room because ${ e.message }`);
+        Log("ERROR", `failed to create room because ${ name }`);
+        
+        return console.error(e);
+    }
+    
+    const room = rooms[name];
+
+    room.name = name;
+    room.master = socket.user.id;
+
+    socket.room = room;
+
+    return ack(true, null);
+};
+
+exports.list = (socket, ack) => {
+    const { user, adapter: { rooms } } = socket;
+
+    if (!user) {
+        return ack(false, { reason: "Not Authorized" });
+    
+    }
+
+    Object
+        .keys(rooms)
+        .filter((name) => !rooms[name].hasOwnProperty('master'))
+        .forEach((name) => delete rooms[name]);
+
+    return ack(true, null, rooms);
+};
+
+exports.join = (socket, frame, ack) => {
+    const { user, adapter: { rooms } } = socket;
+    const { name } = frame;
+
+    if (!user) {
+        return ack(false, { reason: "Not Authorized" });
+    }
+    
+    const room = rooms[name];
+
+    if (!room) { 
+        return ack(false, { reason: `Cannot Found Room ${ name }` });
+    }
+
+    try {
+        socket.join(name);
+
+        socket.to(name).emit("room.join", {
+            member: user.id
+        });
+    } catch (e) {
+        ack(false, { reason: e.message });
+        Log("ERROR", `failed to join room because ${ e.message }`);
+        
+        return console.error(e);
+    }
+
+    socket.room = room;
+
+    return ack(true, null);
+};
+
+exports.quit = (socket, ack) => {
+    const { user, room } = socket;
+
+    if (!user) {
+        return ack(false, { reason: "Not Authorized" });
+    }
+
+    if (!room) {
+        return ack(false, { reason: "Cannot Found Current Room" });
+    }
+
+    try {
+        socket.leave(room.name);
+
+        socket.to(room.name).emit("room.quit", {
+            member: user.id
+        });
+    } catch (e) {
+        ack(false, { reason: e.message });
+        Log("ERROR", `failed to quit room because ${ e.message }`);
 
         return console.error(e);
     }
 
-    socket.room = name;
-    return ack(true);
+    socket.room = false;
+
+    return ack(true, null);
 };
 
 exports.chat = (socket, frame, ack) => {
     const { user, room } = socket;
+    const { message } = frame;
 
     if (!user) {
-        return ack(false, { reason: "Not Autorized" });
+        return ack(false, { reason: "Not Authorized" });
     }
 
     if (!room) {
-        return ack(false, { reason: "Cannot Find Current Room" });
+        return ack(false, { reason: "Cannot Found Current Room" });
     }
 
     try {
-        socket.to(room).emit("room.chat", { 
-            sender: socket.id, 
-            message: frame.message 
+        socket.to(room.name).emit("room.chat", {
+            message: message,
+            sender: user.id
         });
     } catch (e) {
         ack(false, { reason: e.message });
-        Log("ERROR", `failed to send message because ${ e.message }`);
+        Log("ERROR", `failed to chat message because ${ e.message }`);
 
         return console.error(e);
     }
-
-    return ack(true);
-};
+    
+    return ack(true, null);
+}

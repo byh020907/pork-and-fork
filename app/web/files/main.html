@@ -33,6 +33,11 @@
             </form>
         </section>
 
+        <section style="display: none;" id="room-section">
+            <input type="button" value="Create New Room" id="create-room-button">
+            <input type="button" value="Join Another Room" id="join-room-button">
+        </section>
+
         <section style="display: none;" id="chat-section">
             <ul id="chat-list">
             </ul>
@@ -40,11 +45,15 @@
             <form id="chat-form">
                 <input type="text" name="message" placeholder="Message" autocomplete="off" id="chat-message-text">
             </form>
+
+            <input type="button" value="Quit This Room" id="quit-room-button">   
         </section>
 
         <footer>
         </footer>
     </body>
-    
+
+    <script type="text/javascript" src="/static/js/auth.js"></script>
+    <script type="text/javascript" src="/static/js/room.js"></script>
     <script type="text/javascript" src="/static/js/main.js"></script>
 </html>
