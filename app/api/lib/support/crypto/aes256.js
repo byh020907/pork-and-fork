@@ -1,7 +1,7 @@
 const Crypto = require("crypto");
 const Config = require("../config");
 
-const { crypto: { aes256: { secret } } } = Config;
+const { secret } = Config.crypto.aes256;
 
 exports.encrypt = (text) => {
     const cipher = Crypto.createCipher("aes-256-cbc", secret);
