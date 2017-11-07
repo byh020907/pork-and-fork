@@ -1,7 +1,8 @@
 const Log = require("../../../lib/support/log");
 
 exports.create = (socket, frame, ack) => {
-    const { user, adapter: { rooms } } = socket;
+    const { user, io } = socket;
+    const { rooms } = io.sockets.adapter;
     const { name } = frame;
 
     if (!user) {
@@ -32,23 +33,24 @@ exports.create = (socket, frame, ack) => {
 };
 
 exports.list = (socket, ack) => {
-    const { user, adapter: { rooms } } = socket;
+    const { user, io } = socket;
+    const { rooms } = io.sockets.adapter;
 
     if (!user) {
         return ack(false, { reason: "Not Authorized" });
-    
     }
 
     Object
         .keys(rooms)
-        .filter((name) => !rooms[name].hasOwnProperty('master'))
-        .forEach((name) => delete rooms[name]);
+        .filter(name => !rooms[name].hasOwnProperty("master"))
+        .forEach(name => delete rooms[name]);
 
     return ack(true, null, rooms);
 };
 
 exports.join = (socket, frame, ack) => {
-    const { user, adapter: { rooms } } = socket;
+    const { user, io } = socket;
+    const { rooms } = io.sockets.adapter;
     const { name } = frame;
 
     if (!user) {

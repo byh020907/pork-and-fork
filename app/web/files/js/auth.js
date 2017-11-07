@@ -6,4 +6,4 @@ const Auth = {
     register: (socket, id, password, name, callback) => {
         socket.emit("auth.register", { id, password, name }, callback);
     }
-}
+};

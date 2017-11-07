@@ -58,7 +58,13 @@ socket.once("connect", () => {
     });
 
     document.getElementById("create-room-button").addEventListener("click", (e) => {
-        Room.create(socket, prompt("Enter Your Room Name"), (result, error) => {
+        const name = prompt("Enter Your Room Name");
+
+        if (!name) {
+            return alert("Please Enter Your Room Name");
+        }
+
+        Room.create(socket, name, (result, error) => {
             if (result) {
                 switchSection(getCurrentSection(), document.getElementById("chat-section"));
             } else {
@@ -68,7 +74,13 @@ socket.once("connect", () => {
     });
             
     document.getElementById("join-room-button").addEventListener("click", (e) => {
-        Room.join(socket, prompt("Enter Anther Room Name"), (result, error) => {
+        const name = prompt("Enter Another Room Name");
+
+        if (!name) {
+            return alert("Please Enter Your Room Name");
+        }
+        
+        Room.join(socket, name, (result, error) => {
             if (result) {
                 switchSection(getCurrentSection(), document.getElementById("chat-section"));
             } else {

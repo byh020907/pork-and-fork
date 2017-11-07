@@ -15,6 +15,12 @@ const Account = new Schema({
     name: String
 });
 
+Account.statics.findById = function({ id }) {
+    id = AES256.encrypt(id);
+    
+    return this.findOne({ id });
+}
+
 Account.statics.findByIdAndPw = function({ id, password }) {
     id = AES256.encrypt(id);
     password = SHA256.encrypt(password);

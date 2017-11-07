@@ -11,13 +11,15 @@ io.on("connection", (socket) => {
 
     socket.use(Logger());
 
-    const { adapter } = io.sockets;
-
-    socket.adapter = adapter;
+    socket.io = io;
 
     socket.on("auth.register", (frame, ack) => {
         Auth.register(socket, frame, ack);
     });
+
+    socket.on("auth.check", (frame, ack) => {
+        Auth.check(socket, frame, ack);
+    })
 
     socket.on("auth.login", (frame, ack) => {
         Auth.login(socket, frame, ack);

@@ -2,6 +2,8 @@ const Account = require("../../model/account");
 const Log = require("../../../lib/support/log");
 
 exports.login = async (socket, frame, ack) => {
+    const { io } = socket;
+    const { sockets } = io.sockets;
     const { id, password } = frame;
 
     let account;
@@ -18,12 +20,21 @@ exports.login = async (socket, frame, ack) => {
     if (!account) {
         return ack(false, { reason: "Cannot Find Account" });
     }
-
-    ack(true);
-
+    
     account.decrypt();
+    
+    Object
+        .keys(sockets)
+        .filter(id => sockets[id].hasOwnProperty("user"))
+        .forEach(id => { 
+            if (sockets[id].user.id === account.id) {
+                return ack(false, { reason: 'Already Connected Now' });
+            }
+        });
 
     socket.user = account;
+
+    return ack(true);
 };
 
 exports.register = async (socket, frame, ack) => {
@@ -49,4 +60,25 @@ exports.register = async (socket, frame, ack) => {
     }
 
     ack(true);
+};
+
+exports.check = async (socket, frame, ack) => {
+    const { id } = frame;
+
+    let account;
+
+    try {
+        account = await Account.findById({ id });
+    } catch (e) {
+        ack(false, { reason: e.message });
+        Log("ERROR", `failed to find account because ${ e.message }`);
+
+        return console.error(e);
+    }
+
+    if (account) {
+        return ack(false, { reason: "Account Already Exists" });
+    }
+
+    return ack(true);
 };
