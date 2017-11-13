@@ -1,0 +1,7 @@
+@import url("./chat.css");
+@import url("./login.css");
+@import url("./register.css");
+
+* {
+    box-sizing: border-box;
+}
