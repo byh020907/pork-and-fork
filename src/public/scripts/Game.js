@@ -16,12 +16,12 @@ class Game{
     this.player.body.restitution=0.3;
     this.world.addBody(this.player.body);
 
-    this.player2=new Polygon(350,0);
-    this.player2.body.angularVelocity=0.01;
-    this.player2.setColor(0,1,1,1);
-    this.player2.setRegularPolygon(3,100);
-    this.player2.body.setMass(1);
-    this.world.addBody(this.player2.body);
+    // this.player2=new Polygon(350,0);
+    // this.player2.body.angularVelocity=0.01;
+    // this.player2.setColor(0,1,1,1);
+    // this.player2.setRegularPolygon(3,100);
+    // this.player2.body.setMass(1);
+    // this.world.addBody(this.player2.body);
 
     var ground=new Polygon(0,400);
     ground.setStatic();
@@ -33,7 +33,7 @@ class Game{
     ]);
     ground.setColor(0,0,0,0.5);
     ground.tag="ground";
-    // ground.body.rotateAngle=Math.PI*0.05;
+    ground.body.rotateAngle=Math.PI*0.05;
     this.world.addBody(ground.body);
 
     ground=new Polygon(-1000,400);
@@ -58,15 +58,21 @@ class Game{
     ground.setColor(0,0,0,0.5);
     this.world.addBody(ground.body);
 
+    // let c=new Circle(0,0);
+    // c.setRadius(50);
+    // c.body.angularVelocity=0.1;
+    // c.setStatic();
+    // this.world.addBody(c.body);
+
     let x=Math.random()*1000-500;
     let y=Math.random()*1000-500;
 
-    for(let i=0;i<5;i++){
-      let p=new Polygon(x,y);
-      p.setRegularPolygon(3+i,100);
-      p.body.setMass(1);
-      this.world.addBody(p.body);
-    }
+    // for(let i=0;i<5;i++){
+    //   let p=new Polygon(x,y);
+    //   p.setRegularPolygon(3+i,100);
+    //   p.body.setMass(1);
+    //   this.world.addBody(p.body);
+    // }
   }
 
   reset(){
@@ -75,6 +81,17 @@ class Game{
   }
 
   update(){
+
+    // var length=150;
+    // var pos=new Vector2d(0,-1200);
+    // var k=0.001;
+    // pos.subLocal(this.player.body.pos);
+    // var currentLength=pos.length();
+    // pos.normalizeLocal();
+    // var stretch=length-currentLength;
+    //
+    // this.player.body.applyForce(pos.scale(-k*stretch));
+    this.player.body.angularVelocity+=0.05*(-this.player.body.rotateAngle);
 
     this.world.update();
 
@@ -93,11 +110,24 @@ class Game{
     }
 
     if(isKeyPressed(32)){
-      for(let i=0;i<5;i++){
-        let p=new Polygon(0,-100);
-        p.setRegularPolygon(3+i,50);
-        p.body.setMass(40);
-        this.world.addBody(p.body);
+      // for(let i=0;i<5;i++){
+        // let p=new Polygon(this.player.nose.body.pos.x,this.player.nose.body.pos.y);
+        // p.setRegularPolygon(3,50);
+        // p.body.angularVelocity=1;
+        // p.body.setMass(4);
+        // let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);
+        // p.body.applyForce(v);
+        // this.world.addBody(p.body);
+      // }
+
+      for(let i=0;i<1;i++){
+        let c=new Circle(this.player.nose.body.pos.x,this.player.nose.body.pos.y);
+        c.setRadius(150);
+        c.body.angularVelocity=1.1;
+        c.body.setMass(1);
+        let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);
+        c.body.applyForce(v);
+        this.world.addBody(c.body);
       }
     }
 
@@ -114,22 +144,22 @@ class Game{
     //p2
 
 
-    if(isKeyDown(37)){
-      this.player2.body.force.x=-4;
-    }
-
-    if(isKeyDown(38)){
-      // this.player2.jump(15);
-      this.player2.body.force.y=-4;
-    }
-
-    if(isKeyDown(39)){
-      this.player2.body.force.x=4;
-    }
-
-    if(isKeyDown(40)){
-      this.player2.body.force.y=4;
-    }
+    // if(isKeyDown(37)){
+    //   this.player2.body.applyForce(new Vector2d(-4,0));
+    // }
+    //
+    // if(isKeyDown(38)){
+    //   // this.player2.jump(15);
+    //   this.player2.body.force.y=-4;
+    // }
+    //
+    // if(isKeyDown(39)){
+    //   this.player2.body.force.x=4;
+    // }
+    //
+    // if(isKeyDown(40)){
+    //   this.player2.body.force.y=4;
+    // }
   }
 
   render(){

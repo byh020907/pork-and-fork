@@ -26,10 +26,12 @@ function isKeyReleased(keyCode) {
 
 function keyDown(e) {
     currentKeys[e.keyCode] = true;
+    uiManager.keyDown(e);
 }
 
 function keyUp(e) {
     currentKeys[e.keyCode] = false;
+    uiManager.keyUp(e);
 }
 
 function isMouseDown(which) {

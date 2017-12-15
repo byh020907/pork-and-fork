@@ -11,6 +11,8 @@ function init(){
 }
 
 function gameLoop(){
+  //textCtx 초기화용
+  display.update();
   update();
   render();
   requestAnimationFrame(gameLoop);

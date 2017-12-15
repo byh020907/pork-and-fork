@@ -6,6 +6,12 @@ function Rectangle(x,y,width,height){
   this.height=height;
 }
 
+Rectangle.prototype.set=function(x,y,width,height){
+  this.pos.set(x,y);
+  this.width=width;
+  this.height=height;
+}
+
 Rectangle.prototype.getX=function(){
   return this.pos.x;
 }

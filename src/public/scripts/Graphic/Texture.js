@@ -2,15 +2,33 @@
 
 function Texture(src){
   Shape.apply(this,[]);
-  this.texture=createTexture(src);
 
-  let image=new Image();
-  var self=this;
-  image.onload = function() {
-    self.imageWidth=image.naturalWidth;
-    self.imageHeight=image.naturalHeight;
+  //일단 빨간색으로 로드//나중에 texture는 해당 이미지로 변경된다
+
+  this.texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, this.texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
+
+  var a=arguments;
+
+  switch (a.length) {
+    case 1:{
+      createTexture(this.texture,src);
+      let image=new Image();
+      var self=this;
+      image.onload = function() {
+        self.imageWidth=image.naturalWidth;
+        self.imageHeight=image.naturalHeight;
+      }
+      image.src=src;
+    }break;
+
+    case 2:{
+      createTexture(this.texture,a[0],a[1]);
+    }break;
+
+    default:OverloadingException();
   }
-  image.src=src;
 
   this.uvs=[
     0.0, 0.0,

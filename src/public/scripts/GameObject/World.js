@@ -5,7 +5,7 @@ class World {
     constructor(bound) {
         this.rootQuad = new QuadTree(0, bound);
         this.bodyList = [];
-        this.iterations = 5;
+        this.iterations = 15;
     }
 
     update() {

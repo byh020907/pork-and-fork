@@ -61,73 +61,73 @@ function IntervalDistance(minA, maxA, minB, maxB) {
 }
 
 //구버전(ContactPoint 고려x)
-function PolygonvsPolygon(m, A, B) {
-
-    // var contacts = []; //길이는 최대 2
-    // var contactCount = 0;
-    var normal;
-    var penetration = Number.MAX_VALUE;
-
-    var edgeCountA = A.vertices.length;
-    var edgeCountB = B.vertices.length;
-
-    // 두 다각형의 모든 변에 대해 루프
-    for (let edgeIndex = 0; edgeIndex < edgeCountA + edgeCountB; edgeIndex++) {
-        var axis;
-        // ===== 1. 지금 교차하는지 본다 =====
-        // 지금 변에 수직인 축을 찾는다
-        if (edgeIndex < edgeCountA) {
-            axis = A.u.mul(A.getNormal(edgeIndex));
-        } else {
-            axis = B.u.mul(B.getNormal(edgeIndex-edgeCountA));
-        }
-
-        // 지금 축에 다각형을 정사영한다
-        var ADot = ProjectPolygon(axis, A);
-        var BDot = ProjectPolygon(axis, B);
-
-        var minA = ADot.min;
-        var minB = BDot.min;
-        var maxA = ADot.max;
-        var maxB = BDot.max;
-
-        var intervalDistance = IntervalDistance(minA, maxA, minB, maxB);
-        // 지금 교차하는지 검사한다
-        if (intervalDistance > 0)
-            return;
-
-        intervalDistance = Math.abs(intervalDistance);
-
-        // if ((minA<minB&&maxB<maxA) || (minB<minA&&maxA<maxB)) {
-        //   // get the overlap plus the distance from the minimum end points
-        //   let mins = Math.abs(minA - minB);
-        //   let maxs = Math.abs(maxA - maxB);
-        //   // NOTE: depending on which is smaller you may need to
-        //   // negate the separating axis!!
-        //   if (mins < maxs) {
-        //     intervalDistance += mins;
-        //   } else {
-        //     intervalDistance += maxs;
-        //   }
-        //   console.log("겹침");
-        // }
-
-        // 지금 간격이 최소 간격인지 확인한다. 최소 옮김 벡터를 구하는 데 쓴다
-        if (intervalDistance < penetration) {
-            penetration = intervalDistance;
-            normal = axis;
-
-            let d = B.pos.sub(A.pos);
-            if (normal.dot(d) < 0)
-                normal = normal.scale(-1);
-        }
-    }
-    // console.log(normal,penetration);
-
-    m.normal=normal;
-    m.penetration=penetration;
-    m.contactCount=1;
-}
+// function PolygonvsPolygon(m, A, B) {
+//
+//     // var contacts = []; //길이는 최대 2
+//     // var contactCount = 0;
+//     var normal;
+//     var penetration = Number.MAX_VALUE;
+//
+//     var edgeCountA = A.vertices.length;
+//     var edgeCountB = B.vertices.length;
+//
+//     // 두 다각형의 모든 변에 대해 루프
+//     for (let edgeIndex = 0; edgeIndex < edgeCountA + edgeCountB; edgeIndex++) {
+//         var axis;
+//         // ===== 1. 지금 교차하는지 본다 =====
+//         // 지금 변에 수직인 축을 찾는다
+//         if (edgeIndex < edgeCountA) {
+//             axis = A.u.mul(A.getNormal(edgeIndex));
+//         } else {
+//             axis = B.u.mul(B.getNormal(edgeIndex-edgeCountA));
+//         }
+//
+//         // 지금 축에 다각형을 정사영한다
+//         var ADot = ProjectPolygon(axis, A);
+//         var BDot = ProjectPolygon(axis, B);
+//
+//         var minA = ADot.min;
+//         var minB = BDot.min;
+//         var maxA = ADot.max;
+//         var maxB = BDot.max;
+//
+//         var intervalDistance = IntervalDistance(minA, maxA, minB, maxB);
+//         // 지금 교차하는지 검사한다
+//         if (intervalDistance > 0)
+//             return;
+//
+//         intervalDistance = Math.abs(intervalDistance);
+//
+//         // if ((minA<minB&&maxB<maxA) || (minB<minA&&maxA<maxB)) {
+//         //   // get the overlap plus the distance from the minimum end points
+//         //   let mins = Math.abs(minA - minB);
+//         //   let maxs = Math.abs(maxA - maxB);
+//         //   // NOTE: depending on which is smaller you may need to
+//         //   // negate the separating axis!!
+//         //   if (mins < maxs) {
+//         //     intervalDistance += mins;
+//         //   } else {
+//         //     intervalDistance += maxs;
+//         //   }
+//         //   console.log("겹침");
+//         // }
+//
+//         // 지금 간격이 최소 간격인지 확인한다. 최소 옮김 벡터를 구하는 데 쓴다
+//         if (intervalDistance < penetration) {
+//             penetration = intervalDistance;
+//             normal = axis;
+//
+//             let d = B.pos.sub(A.pos);
+//             if (normal.dot(d) < 0)
+//                 normal = normal.scale(-1);
+//         }
+//     }
+//     // console.log(normal,penetration);
+//
+//     m.normal=normal;
+//     m.penetration=penetration;
+//     m.contactCount=1;
+// }
 
 function findAxisLeastPenetration(faceIndex, A, B) {
     var bestDistance = -Number.MAX_VALUE;
@@ -396,93 +396,88 @@ function PolygonvsPolygon(m,A, B) {
     return true;
 }
 
-function CirclevsPolygon(m,A, B) {
+function CirclevsPolygon(m, A, B) {
 
-    var normal;
-    var penetration = Number.MAX_VALUE;
-
-    var edgeCount = B.vertices.length;
-
-    var edge;
-
-    var center = A.pos;
+    // Transform circle center to Polygon model space
+    //A의 중심이 B의 모델좌표안에서 회전이 0도일때 의 값이다.
+    var center = B.u.transpose().mul(A.pos.sub(B.pos));
 
     var separation = -Number.MAX_VALUE;
-    var faceNormalIndex = 0;
-    var faceNormal;
+    var faceNormalIndex = -1;
 
 
     // 두 다각형의 모든 변에 대해 루프
-    for (let edgeIndex = 0; edgeIndex < edgeCount; edgeIndex++) {
+    for (let i = 0; i < B.vertices.length; i++) {
         // get the current vertex
-        let axis = B.u.mul(B.getNormal(edgeIndex));
-
-        let s = axis.dot(center.sub(B.pos.add(p1)));
+        let s = B.getNormal(i).dot( center.sub( B.vertices[i] ) );
 
         if (s > A.radius)
             return;
 
         if (s > separation) {
             separation = s;
-            faceNormalIndex = edgeIndex;
-            faceNormal = axis;
+            faceNormalIndex = i;
         }
     }
 
-    var v1 = B.pos.add(B.u.mul(B.vertices[faceNormalIndex]));
-    var v2 = B.pos.add(B.u.mul(B.vertices[faceNormalIndex + 1 == B.vertices.length ? 0 : faceNormalIndex + 1]));
+    var v1 = B.vertices[faceNormalIndex];
+    var v2 = B.vertices[faceNormalIndex + 1 == B.vertices.length ? 0 : faceNormalIndex + 1];
 
     // Check to see if center is within polygon
     if (separation < 0.0001) {
-        normal = faceNormal.scale(-1);
-        penetration = A.radius;
-
-        m.normal=normal;
-        m.penetration=penetration;
         m.contactCount=1;
+        m.normal.set(B.u.mul(B.getNormal(faceNormalIndex)).scale(-1));
+        m.contacts[0].set(m.normal.scale(A.radius).add(A.pos));
+        m.penetration = A.radius;
         return;
     }
 
     var dot1 = center.sub(v1).dot(v2.sub(v1));
     var dot2 = center.sub(v2).dot(v1.sub(v2));
 
-    penetration = A.radius - separation;
+    m.penetration = A.radius - separation;
 
     // Closest to v1
     if (dot1 <= 0.0) {
         if (center.sub(v1).lengthSquared() > A.radius * A.radius)
             return;
+        m.contactCount=1;
         let n = v1.sub(center);
-        penetration = Math.abs(n.length() - A.radius);
+        n=B.u.mul(n);
         n.normalizeLocal();
-        normal = n;
+        m.normal.set(n);
+        m.contacts[0].set(B.u.mul(v1).add(B.pos));
     }
 
     // Closest to v2
     else if (dot2 <= 0.0) {
         if (center.sub(v2).lengthSquared() > A.radius * A.radius)
             return;
+        m.contactCount=1;
         let n = v2.sub(center);
-        penetration = Math.abs(n.length() - A.radius);
+        n=B.u.mul(n);
         n.normalizeLocal();
-        normal = n;
+        m.normal.set(n);
+        m.contacts[0].set(B.u.mul(v2).add(B.pos));
     }
 
     // Closest to face
     else {
-        let n = faceNormal;
+        let n = B.getNormal(faceNormalIndex);
         if (center.sub(v1).dot(n) > A.radius)
             return;
-        normal = n.scale(-1);
+        m.contactCount=1;
+        n=B.u.mul(n);
+        m.normal=n.scale(-1);
+        m.contacts[0].set(m.normal.scale(A.radius).add(A.pos));
     }
-
-    m.normal=normal;
-    m.penetration=penetration;
-    m.contactCount=1;
+    // console.log(m.contacts[0]);
 }
 
 function PolygonvsCircle(m,A, B) {
-  return CirclevsPolygon(m,B, A);
+  CirclevsPolygon(m,B, A);
+  if(m.contactCount>0)
+    m.normal.set(m.normal.scale(-1));
 }
 
 Collision.dispatch=[

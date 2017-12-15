@@ -10,11 +10,6 @@ Collision.prototype.hitTest = function(collision) {
 
 }
 
-// Collision.dispatch=[
-//   [CirclevsCircle,CirclevsPolygon],
-//   [PolygonvsCircle,PolygonvsPolygon]
-// ];
-
 function ResolveCollision(A, B, normal) {
     // Calculate relative velocity
     var rv = B.velocity.sub(A.velocity);

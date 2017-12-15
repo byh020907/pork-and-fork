@@ -46,17 +46,19 @@ class QuadTree {
      * of the parent node
      */
     getIndex(pRect) {
+        var bound=pRect.bound;
+
         var index = -1;
         var verticalMidpoint = this.bounds.getX() + (this.bounds.getWidth() / 2);
         var horizontalMidpoint = this.bounds.getY() + (this.bounds.getHeight() / 2);
 
         // Object can completely fit within the top quadrants
-        var topQuadrant = (pRect.getY() < horizontalMidpoint && pRect.getY() + pRect.getHeight() < horizontalMidpoint);
+        var topQuadrant = (bound.getY() < horizontalMidpoint && bound.getY() + bound.getHeight() < horizontalMidpoint);
         // Object can completely fit within the bottom quadrants
-        var bottomQuadrant = (pRect.getY() > horizontalMidpoint);
+        var bottomQuadrant = (bound.getY() > horizontalMidpoint);
 
         // Object can completely fit within the left quadrants
-        if (pRect.getX() < verticalMidpoint && pRect.getX() + pRect.getWidth() < verticalMidpoint) {
+        if (bound.getX() < verticalMidpoint && bound.getX() + bound.getWidth() < verticalMidpoint) {
             if (topQuadrant) {
                 index = 1;
             } else if (bottomQuadrant) {
@@ -64,7 +66,7 @@ class QuadTree {
             }
         }
         // Object can completely fit within the right quadrants
-        else if (pRect.getX() > verticalMidpoint) {
+        else if (bound.getX() > verticalMidpoint) {
             if (topQuadrant) {
                 index = 0;
             } else if (bottomQuadrant) {

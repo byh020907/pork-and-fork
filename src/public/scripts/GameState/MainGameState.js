@@ -7,6 +7,7 @@ function MainGameState(){
 inherit(GameState,MainGameState);
 
 MainGameState.prototype.init=function(){
+  // this.t=new Texture("www.jrr.kr","bold 20px Arial");
   this.game.init();
   var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
   mainPanel.addComponent(new UIButton(TextureLoader.get("images/cloud.png"),0,display.getHeight()/2,200,100,{
@@ -25,6 +26,27 @@ MainGameState.prototype.init=function(){
     },
     released:function(uiButton){
       console.log("release");
+    }
+  }));
+
+  mainPanel.addComponent(new UITextField(TextureLoader.get("images/blankImage.png"),0,display.getHeight()-200/2,500,100,{
+    entered:function(uiButton){
+      // uiButton.body.width=200/1.5;
+      // uiButton.body.height=100/1.5;
+      // console.log("enter");
+    },
+    exited:function(uiButton){
+      // uiButton.body.width=200;
+      // uiButton.body.height=100;
+      // console.log("exit");
+      uiButton.isFocus=false;
+    },
+    pressed:function(uiButton){
+      // console.log("press");
+      uiButton.isFocus=true;
+    },
+    released:function(uiButton){
+      // console.log("release");
     }
   }));
 
@@ -58,10 +80,12 @@ MainGameState.prototype.reset=function(){
   this.game=null;
   uiManager.clear();
 }
-
+let i=0;
 MainGameState.prototype.update=function(){
+  // var mvMatrix=mat4.create();
+  // mat4.identity(mvMatrix);
+  // this.t.render(mvMatrix,display.getProjection());
   this.game.update();
-
   // for(let y in Entity.list){
   //   let e1=Entity.list[y];
   //   for(let x in Entity.list){
@@ -91,8 +115,6 @@ MainGameState.prototype.update=function(){
   //   c.body.restitution=3;
   //   c.body.velocity=angle.normalize().scale(15);
   // }
-
-
   uiManager.update();
 }
 
@@ -112,18 +134,20 @@ function search(camera,node){
 }
 
 MainGameState.prototype.render=function(display){
-  // search(this.camera,this.rootQuad);
+  // var mvMatrix=mat4.create();
+  // mat4.identity(mvMatrix);
+  // this.t.render(mvMatrix,this.game.camera.getProjection());
+  // search(this.game.camera,this.game.world.rootQuad);
 
-  //쿼드트리 감지영역표시용
+  // 쿼드트리 감지영역표시용
   // for(var id in Entity.list){
-  //   let body=Entity.list[id].body;
-  //   if(body!=undefined){
-  //     let w=body.getWidth();
-  //     let h=body.getHeight();
-  //     let x=body.getX()+w/2;
-  //     let y=body.getY()+h/2;
-  //     this.camera.render(TextureLoader.get("images/blankImage.png"),x,y,w,h,0);
-  //   }
+  //   let bound=Entity.list[id].body.bound;
+  //
+  //   let w=bound.getWidth();
+  //   let h=bound.getHeight();
+  //   let x=bound.getX()+w/2;
+  //   let y=bound.getY()+h/2;
+  //   this.game.camera.render(TextureLoader.get("images/blankImage.png"),x,y,w,h,0);
   // }
 
   this.game.render();

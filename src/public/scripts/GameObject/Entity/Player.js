@@ -5,18 +5,24 @@ class Player extends Entity{
     super();
     this.tag="player";
     this.polygon=new Polygon(x,y);
+    //body 크기 설정 // 직사각형만 해당
+    var width=140;
+    var height=100;
+    this.body.width=width;
+    this.body.height=height;
+
     this.polygon.setVertices([
-      new Vector2d(-70,-50),
-      new Vector2d(70,-50),
-      new Vector2d(70,50),
-      new Vector2d(-70,50),
+      new Vector2d(-width/2,-height/2),
+      new Vector2d(width/2,-height/2),
+      new Vector2d(width/2,height/2),
+      new Vector2d(-width/2,height/2),
     ]);
 
     //ordinal 설정및 owner 재설정
     this.ordinal=1;
     this.body.owner=this.model.owner=this.collision.owner=this;
 
-    // this.nose=new PigNose(this,10,10);
+    this.nose=new PigNose(this,200,0);
 
     this.idleAni=new AnimationModel(this,TextureLoader.get("images/Pig1-Sheet.png"),0,17,949/4,143,4,30);
     this.idleAni.loop=true;
@@ -46,7 +52,7 @@ class Player extends Entity{
     this.jumpCount=0;
     this.maxJumpCount=1;
 
-    this.maxSpeed=3;
+    this.maxSpeed=5;
 
     this.isMoving=false;
   }
@@ -77,6 +83,7 @@ class Player extends Entity{
     this.hurtAni.isFlipped=value;
     this.idleAni.isFlipped=value;
     this.walkAni.isFlipped=value;
+    this.nose.setFlip(value);
   }
 
   jump(amount){
@@ -93,7 +100,7 @@ class Player extends Entity{
     if(Math.abs(this.body.velocity.x)>this.maxSpeed)
       return;
     Player.SPEED.rotate(rad);
-    this.body.applyForce(Player.SPEED,);
+    this.body.applyForce(Player.SPEED);
     if(Math.PI/2<rad&&rad<Math.PI*1.5)
       this.setFlip(true);
     else
@@ -104,11 +111,13 @@ class Player extends Entity{
   update(){
     this.model.update();
     this.polygon.update();
+    this.nose.update();
     this.isMoving=false;
   }
 
   render(pMtrx) {
-    this.polygon.render(pMtrx);
+    this.nose.render(pMtrx);
+    super.render(pMtrx);
   }
 
   hitProcess(e){

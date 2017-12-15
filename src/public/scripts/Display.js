@@ -11,6 +11,9 @@ function Display(width,height){
   this.canvas;
   this.canvasCtx;
 
+  this.textCanvas;
+  this.textCtx;
+
   this.canvas=document.createElement("canvas");
   this.canvas.id="gameScreen";
   this.canvas.style.position="absolute";
@@ -21,6 +24,17 @@ function Display(width,height){
   this.canvas.height=height;
   //html body에 삽입
   document.body.appendChild(this.canvas);
+
+  this.textCanvas=document.createElement("canvas");;
+  this.textCanvas.style.position="absolute";
+  this.textCanvas.style.left="0px";
+  this.textCanvas.style.top="0px";
+  this.textCanvas.style.border="3px solid red";
+  this.textCanvas.width=width;
+  this.textCanvas.height=height;
+  //html body에 삽입
+  document.body.appendChild(this.textCanvas);
+  this.textCtx=this.textCanvas.getContext("2d");
 
   this.projectionMatrix=mat4.create();
   //                                   -1000,-0   (실제 보여지는 z값은 -1000~0이다(0이 맨앞,-1000이 맨뒤))
@@ -104,6 +118,14 @@ function Display(width,height){
   }
 }
 
+Display.prototype.update=function(){
+  return this.textCtx.clearRect(0,0,this.textCanvas.width,this.textCanvas.height);
+}
+
+Display.prototype.fillText=function(string,x,y){
+  this.textCtx.fillText(string,x,y);
+}
+
 Display.prototype.getProjection=function(){
   return mat4.clone(this.projectionMatrix);
 }
@@ -133,13 +155,9 @@ Display.prototype.render=function(renderAble,x,y,width,height,rad){
   renderAble.render(mvMatrix,this.getProjection());
 }
 
-function createTexture(src) {
-    var texture = gl.createTexture();
-    texture.image = new Image();
-    texture.image.onload = function () {
-        handleLoadedTexture(texture);
-    }
-    texture.image.src = src;
+function createTexture(texture,src) {
+
+    var a=arguments;
 
     function handleLoadedTexture(texture) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -152,5 +170,44 @@ function createTexture(src) {
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
-    return texture;
+    switch (a.length) {
+      case 2:{
+        texture.image = new Image();
+        texture.image.onload = function () {
+            handleLoadedTexture(texture);
+        }
+        texture.image.src = src;
+      }break;
+
+      //text,font
+      case 3:{
+        var txtImg=display.textCanvas;
+        var ctx=txtImg.getContext("2d");
+
+        // ctx.save();
+
+        var text=a[1];//    "www.jrr.kr";
+        ctx.font=a[2];//    "bold 20px Arial";
+
+        txtImg.width  = 100;
+        txtImg.height = 50;
+        ctx.font = a[2];
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillText(text, txtImg.width / 2, txtImg.height / 2);
+
+        // ctx.restore();
+
+        texture.image = txtImg;
+        texture.image.onload = function () {
+            handleLoadedTexture(texture);
+        }
+        texture.image.src = txtImg.toDataURL("image/png");
+      }break;
+
+      default:OverloadingException();
+
+    }
 }

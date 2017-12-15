@@ -68,8 +68,8 @@ Vector2d.prototype.set = function(x,y) {
   var a=arguments;
   switch (a.length) {
     case 1:{
-      this.x=x.x;
-      this.y=x.y;
+      this.x=a[0].x;
+      this.y=a[0].y;
     }break;
 
     case 2:{

@@ -49,7 +49,7 @@ class Contact {
             // The idea is if the only thing moving this object is gravity,
             // then the collision should be performed without any restitution
             // if(rv.LenSqr( ) < (dt * gravity).LenSqr( ) + EPSILON)
-            if (rv.lengthSquared() < World.GRAVITY.lengthSquared()+0.001) {
+            if (rv.lengthSquared() < World.GRAVITY.lengthSquared() + 0.001) {
                 this.e = 0.0;
             }
         }
@@ -63,7 +63,7 @@ class Contact {
         let contacts = this.contacts;
         let contactCount = this.contactCount;
 
-        if (A.invMass + B.invMass == 0) {
+        if (A.inv_mass + B.inv_mass == 0) {
             this.infiniteMassCorrection();
             return;
         }
@@ -109,22 +109,19 @@ class Contact {
             jt /= invMassSum;
             jt /= contactCount;
 
-            if(isNaN(jt))
-              console.log(A,B,jt);
-            // console.log(A,B);
-
             // Don't apply tiny friction impulses
-            if (jt <= 0.001)
+            if (-0.001 <= jt && jt <= 0.001)
                 return;
 
             let tangentImpulse;
-            if (Math.abs(jt) < j * this.sf)
-                tangentImpulse = t * jt;
-            else
-                tangentImpulse = t * -j * this.df;
+            if (Math.abs(jt) < j * this.sf) {
+                tangentImpulse = t.scale(jt);
+            } else {
+                tangentImpulse = t.scale(-j * this.df);
+            }
             // Coulumb's law
-            A.applyImpulse(impulse.scale(-1), ra);
-            B.applyImpulse(impulse, rb);
+            A.applyImpulse(tangentImpulse.scale(-1), ra);
+            B.applyImpulse(tangentImpulse, rb);
         }
     }
 

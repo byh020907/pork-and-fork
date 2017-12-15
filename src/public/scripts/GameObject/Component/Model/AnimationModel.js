@@ -90,6 +90,7 @@ AnimationModel.prototype.render = function () {
       var scale = vec3.create();
       if(this.isFlipped)
         width*=-1;
+
       vec3.set(scale, width, height, 1);
       mat4.scale(mvMatrix, mvMatrix, scale);
 
