@@ -3,9 +3,7 @@ const Mongoose = require("../../lib/utility/mongoose");
 const AES256 = require("../../lib/support/crypto/aes256");
 const SHA256 = require("../../lib/support/crypto/sha256");
 
-const { Schema } = Mongoose;
-
-const Account = new Schema({
+const Account = new Mongoose.Schema({
     id: { 
         type: String, 
         unique: true 
@@ -17,15 +15,13 @@ const Account = new Schema({
 
 Account.statics.findById = function({ id }) {
     id = AES256.encrypt(id);
-    
-    return this.findOne({ id });
-}
+    return this.findOne({ id }).exec();
+};
 
 Account.statics.findByIdAndPw = function({ id, password }) {
     id = AES256.encrypt(id);
     password = SHA256.encrypt(password);
-
-    return this.findOne({ id, password });
+    return this.findOne({ id, password }).exec();
 };
 
 Account.statics.validate = function({ id, password, name }) {
@@ -40,18 +36,15 @@ Account.statics.validate = function({ id, password, name }) {
 
 Account.methods.decrypt = function() {
     const { id, name } = this;
-
     this.id = AES256.decrypt(id);
     this.name = AES256.decrypt(name);
 };
 
 Account.methods.encrypt = function() {
     const { id, password, name } = this;
-
     this.id = AES256.encrypt(id);
     this.password = SHA256.encrypt(password);
     this.name = AES256.encrypt(name);
 };
 
-const account = Mongoose.model('Account', Account);
-module.exports = account;
+module.exports = Mongoose.model("account", Account);

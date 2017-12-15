@@ -5,7 +5,6 @@ module.exports = () => {
         const [ event, param ] = packet;
         
         Log("EVENT", `${ event } ${ JSON.stringify(param) }`);
-    
         return next();
     };
 }
