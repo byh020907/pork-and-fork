@@ -2,12 +2,13 @@
 
 var GameStateManager=function(){
   this.list=[];
-  this.currentState=GameState.MENU_STATE;
+  this.currentState=GameState.TITLE_STATE;
 
   this.list.push(new TitleState());
+  this.list.push(new LoginState());
   this.list.push(new MainGameState());
 
-  this.setState(GameState.MENU_STATE);
+  this.setState(GameState.TITLE_STATE);
 }
 
 GameStateManager.prototype.setState=function(state){
@@ -40,8 +41,9 @@ function GameState(){
 
 }
 
-GameState.MENU_STATE=0;
-GameState.MAINGAME_STATE=1;
+GameState.TITLE_STATE=0;
+GameState.LOGIN_STATE=1;
+GameState.MAINGAME_STATE=2;
 
 //미구현 함수(상속)
 GameState.prototype.init=function(){}

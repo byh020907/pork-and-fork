@@ -1,55 +1,40 @@
 "use strict"
 
-function AABB(owner){
-  var a=arguments;
-  switch (a.length) {
-
-    case 2:{
-      let body=a[1];
-      AABB.apply(this,[owner,body.pos,body.width,body.height]);
-    }break;
-
-    case 4:{
-      Collision.apply(this,[owner]);
-      this.pos=a[1].clone();
-      this.width=a[2];
-      this.height=a[3];
-    }break;
-
-    default:
-
-  }
+function AABB(owner,body){
+  Collision.apply(this,[owner]);
+  this.pos=new Vector2d();
+  this.pos.set(body.pos);
+  this.width=body.width;
+  this.height=body.height;
 }
 
 inherit(Collision,AABB);
 
-AABB.prototype.update=function(x,y,width,height){
+AABB.prototype.setBound=function(x,y,width,height){
+  this.pos.set(x,y);
+  this.width=width;
+  this.height=height;
+}
 
-  var a=arguments;
-  switch (a.length) {
-    case 1:{
-      let body=a[0];
-      this.update(body.pos.x,body.pos.y,body.width,body.height);
-    }break;
+// var setPos=new OverlodingTool();
+//
+// setPos.addFunction(function(v){
+//   this.pos.set(v);
+// },1);
+//
+// setPos.addFunction(function(x,y){
+//   this.pos.set(x,y);
+// },2);
 
-    case 4:{
-      this.pos.x=x;
-      this.pos.y=y;
-      this.width=width;
-      this.height=height;
-    }break;
-
-    default: OverloadingException();
-
-  }
-
+AABB.prototype.setPos=function(v){
+  // setPos.self=this;
+  // setPos.execute(arguments);
+  this.pos.set(v);
 }
 
 AABB.prototype.hitTest=function(collision){
   if(collision instanceof AABB)
     return AABBvsAABB(this.owner.body,collision.owner.body);
-  if(collision instanceof CircleCollision)
-    return AABBvsCircle(this.owner.body,collision.owner.body);
 }
 
 function AABBvsAABB(A,B)

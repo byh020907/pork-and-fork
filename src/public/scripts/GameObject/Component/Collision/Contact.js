@@ -133,7 +133,7 @@ class Contact {
         let penetration = this.penetration;
 
         var percent = 0.4; // usually 20% to 80% // Penetration percentage to correct
-        var slop = 0.01; // usually 0.01 to 0.1 // Penetration allowance
+        var slop = 0.05; // usually 0.01 to 0.1 // Penetration allowance
 
         var correction = normal.scale(percent * (max(penetration - slop, 0.0) / (A.inv_mass + B.inv_mass)));
         A.pos.subLocal(correction.scale(A.inv_mass));

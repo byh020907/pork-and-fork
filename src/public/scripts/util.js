@@ -15,9 +15,26 @@ var inherit = (function(){
   }
 })();
 
-function hitTestPoint(aabb, point){
-  return (aabb.pos.x-aabb.width/2<point.x&&point.x<aabb.pos.x+aabb.width/2&&
-          aabb.pos.y-aabb.height/2<point.y&&point.y<aabb.pos.y+aabb.height/2);
+class OverlodingTool{
+  constructor(self){
+    this.self=self;
+    this.functionList={};
+  }
+
+  addFunction(f,parameterNum){
+    this.functionList[parameterNum]=f;
+  }
+
+  execute(){
+    this.functionList[arguments.length].apply(this.self,arguments);
+  }
+
+}
+
+function hitTestPoint(uiCollision, point){
+  //현재는 aabb만 지원
+  return (uiCollision.pos.x<point.x&&point.x<uiCollision.pos.x+uiCollision.width&&
+          uiCollision.pos.y<point.y&&point.y<uiCollision.pos.y+uiCollision.height);
 }
 
 function collisionProcess(self,other){

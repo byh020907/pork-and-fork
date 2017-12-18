@@ -20,9 +20,7 @@ TitleState.prototype.init=function(){
       uiButton.body.width=200;
       uiButton.body.height=100;
     },
-    pressed:function(uiButton){
-      
-    },
+    pressed:function(uiButton){},
     released:function(uiButton){}
   }));
 
@@ -37,7 +35,7 @@ TitleState.prototype.init=function(){
       uiButton.body.height=100;
     },
     pressed:function(uiButton){
-      gsm.setState(GameState.MAINGAME_STATE);
+      gsm.setState(GameState.LOGIN_STATE);
     },
     released:function(uiButton){}
   }));

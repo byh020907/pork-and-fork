@@ -6,10 +6,32 @@ class UIButton extends UIComponent {
     this.buttonListener = buttonListener;
     this.inside = false;
     this.pressed = false;
+    this.label=new UILabel(this);
+  }
+
+  //현재 자신이속한 판넬에서 해당좌표(절대좌표)에 가장 위에있는 component의 id를 리턴하는 함수
+  checkDepthHighest(mousePos){
+    for(let i=this.panel.components.length-1;i>=0;i--){
+      let component=this.panel.components[i];
+      if(hitTestPoint(component.collision, mousePos)){
+        return component.id;
+      }
+    }
+
+    return -1;
+  }
+
+  render(display,xOffset,yOffset){
+    super.render(display,xOffset,yOffset);
+    this.label.render(display,xOffset,yOffset);
   }
 
   update() {
-    if (hitTestPoint(this.collision, mousePos)) {
+    //버튼리스너가 null이면 아무동작도 하지않음
+    if(this.buttonListener==null)
+      return;
+
+    if (this.checkDepthHighest(mousePos)==this.id) {
       if (!this.inside) {
         this.buttonListener.entered(this);
       }
@@ -46,8 +68,6 @@ var hangul = {
   jong: ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
 };
 
-console.log(Hangul.a(['ㄱ','ㅅ']));
-
 /**
  * @param String h : 영어값
  * @return 영어에 해당하는 한글 값
@@ -80,6 +100,32 @@ function isHangul(h){
   return false;
 }
 
+class UILabel extends GameObject{
+  constructor(owner){
+    super();
+    this.owner=owner;
+    this.body=new UIBody(this);
+    this.body.pos.x=owner.body.pos.x;
+    this.body.pos.y=owner.body.pos.y;
+    this.body.width=owner.body.width;
+    this.body.height=owner.body.height;
+    this.model=new Model(this);//그냥 shape모델
+    this.setColor(0,0,0,0.0);
+    this.timer=0;
+  }
+
+  setColor(){
+    this.model.renderAble.setColor.apply(this.model.renderAble,arguments);
+  }
+
+  render(display,xOffset,yOffset){
+    this.model.render(display.getProjection(),xOffset+this.body.pos.x,yOffset+this.body.pos.y,this.body.width,this.body.height,this.body.rotateAngle);
+  }
+
+  update(){
+  }
+}
+
 class UICursor extends GameObject{
   constructor(owner){
     super();
@@ -98,8 +144,8 @@ class UICursor extends GameObject{
     this.timer=0;
   }
 
-  render(pMtrx){
-    super.render(pMtrx);
+  render(display,xOffset,yOffset){
+    this.model.render(display.getProjection(),xOffset+this.body.pos.x,yOffset+this.body.pos.y,this.body.width,this.body.height,this.body.rotateAngle);
   }
 
   update(){
@@ -120,7 +166,6 @@ class UICursor extends GameObject{
     }
 
     this.body.pos.x=this.owner.getX()+total;
-
   }
 }
 
@@ -137,7 +182,28 @@ class UITextField extends UIButton {
     this.cursor=new UICursor(this);
   }
 
+  getTextWidth(){
+    var total=0;
+    for(let i=0;i<this.displayText.length;i++){
+      total+=display.textCtx.measureText(this.displayText.charAt(i)).width;
+    }
+    return total;
+  }
+
+  getTextLeastMaxIndex(){
+    var total=0;
+    var i=-1;
+    for(i=0;i<this.displayText.length;i++){
+      let w=display.textCtx.measureText(this.displayText.charAt(i)).width;
+      if(total+w<this.body.width)
+        total+=w;
+      else break;
+    }
+    return i;
+  }
+
   keyDown(e) {
+    console.log(e,this.body);
     if(!this.isFocus)
       return;
     if (e.keyCode == 21) {
@@ -296,13 +362,21 @@ class UITextField extends UIButton {
     display.textCtx.save();
     display.textCtx.font = (this.body.height * 0.8) + "px Verdana";
     //text rendering
-    display.fillText(this.displayText, xOffset + this.getX(), yOffset + this.getY() + this.body.height / 1.2);
-    var s="";
-    for(let i=0;i<this.buffer.length;i++){
-      s+=this.buffer[i];
+    var txt="";
+    if(this.getTextWidth()>this.body.width){
+      let len=this.getTextLeastMaxIndex();
+      txt=this.displayText.substr(0,len);
     }
-    display.fillText(s, xOffset + this.getX(), yOffset + this.getY() - this.body.height / 1.2);
-    this.cursor.render(display.getProjection());
+    else
+      txt=this.displayText;
+    display.fillText(txt, xOffset + this.getX(), yOffset + this.getY() + this.body.height / 1.2);
+    //현재 한글 완성중인지 표시
+      // var s="";
+      // for(let i=0;i<this.buffer.length;i++){
+      //   s+=this.buffer[i];
+      // }
+      // display.fillText(s, xOffset + this.getX(), yOffset + this.getY() - this.body.height / 1.2);
+    this.cursor.render(display,xOffset,yOffset);
     this.cursor.setCurrentPos(this.currentCursorIndex,display);
     display.textCtx.restore();
   }

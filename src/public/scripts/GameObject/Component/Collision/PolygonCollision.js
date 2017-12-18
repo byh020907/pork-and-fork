@@ -436,6 +436,7 @@ function CirclevsPolygon(m, A, B) {
     var dot2 = center.sub(v2).dot(v1.sub(v2));
 
     m.penetration = A.radius - separation;
+    console.log(m.penetration,A.radius,separation);
 
     // Closest to v1
     if (dot1 <= 0.0) {
@@ -447,6 +448,8 @@ function CirclevsPolygon(m, A, B) {
         n.normalizeLocal();
         m.normal.set(n);
         m.contacts[0].set(B.u.mul(v1).add(B.pos));
+        //임시로 일단 꼭짓점 충돌시 1/10으로 충돌 깊이를 줄여둠//임시로한거라 나중에 수정필요
+        m.penetration*=0.1;
     }
 
     // Closest to v2
@@ -459,6 +462,8 @@ function CirclevsPolygon(m, A, B) {
         n.normalizeLocal();
         m.normal.set(n);
         m.contacts[0].set(B.u.mul(v2).add(B.pos));
+        //임시로 일단 꼭짓점 충돌시 1/10으로 충돌 깊이를 줄여둠//임시로한거라 나중에 수정필요
+        m.penetration*=0.1;
     }
 
     // Closest to face
