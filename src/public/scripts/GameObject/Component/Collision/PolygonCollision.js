@@ -436,7 +436,6 @@ function CirclevsPolygon(m, A, B) {
     var dot2 = center.sub(v2).dot(v1.sub(v2));
 
     m.penetration = A.radius - separation;
-    console.log(m.penetration,A.radius,separation);
 
     // Closest to v1
     if (dot1 <= 0.0) {

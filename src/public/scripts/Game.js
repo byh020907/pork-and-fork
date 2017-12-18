@@ -128,7 +128,7 @@ class Game{
 
       for(let i=0;i<1;i++){
         let c=new Circle(this.player.nose.body.pos.x,this.player.nose.body.pos.y);
-        c.setRadius(150);
+        c.setRadius(10);
         // c.body.angularVelocity=1.1;
         c.body.setMass(1);
         let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);

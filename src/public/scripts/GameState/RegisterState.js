@@ -1,5 +1,5 @@
 "use strict"
-class LoginState extends GameState {
+class RegisterState extends GameState {
 
   constructor(){
     super();
@@ -12,9 +12,7 @@ class LoginState extends GameState {
 
     var loginPanel=new UIPanel(this.blankImage, display.getWidth() / 2 - 350, display.getHeight() / 2 - 200, 700, 500);
 
-    var goToLoginBtn=new UIButton(this.blankImage, 0, -100, 150, 100,null);
-
-    var goToRegisterBtn=new UIButton(this.blankImage, 150, -100, 150, 100, {
+    var goToLoginBtn=new UIButton(this.blankImage, 0, -100, 150, 100,{
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -26,11 +24,13 @@ class LoginState extends GameState {
       },
       released: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
-        gsm.setState(GameState.REGISTER_STATE);
+        gsm.setState(GameState.LOGIN_STATE);
       }
     });
 
-    var idText=new UITextField(this.blankImage, 150, 150, 400, 50, {
+    var goToRegisterBtn=new UIButton(this.blankImage, 150, -100, 150, 100, null);
+
+    var idText=new UITextField(this.blankImage, 150, 200, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -46,7 +46,7 @@ class LoginState extends GameState {
       }
     });
 
-    var passwordText=new UITextField(this.blankImage, 150, 250, 400, 50, {
+    var passwordText=new UITextField(this.blankImage, 150, 300, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -62,7 +62,7 @@ class LoginState extends GameState {
       }
     });
 
-    var submitBtn=new UIButton(this.blankImage, loginPanel.body.width/2-75, 400, 150, 70, {
+    var R_passwordText=new UITextField(this.blankImage, 150, 300, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -75,7 +75,6 @@ class LoginState extends GameState {
         uiButton.label.setColor(0,0,0,0.2);
       },
       released: function(uiButton) {
-        gsm.setState(GameState.LOBBY_STATE);
       }
     });
 
@@ -84,7 +83,7 @@ class LoginState extends GameState {
     loginPanel.addComponent(goToRegisterBtn);
     loginPanel.addComponent(idText);
     loginPanel.addComponent(passwordText);
-    loginPanel.addComponent(submitBtn);
+    loginPanel.addComponent(R_passwordText);
     mainPanel.addComponent(loginPanel);
     uiManager.addPanel(mainPanel);
   }

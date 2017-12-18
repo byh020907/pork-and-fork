@@ -133,10 +133,15 @@ class UICursor extends GameObject{
     this.body=new UIBody(this);
     this.body.pos.x=owner.body.pos.x;
     this.body.pos.y=owner.body.pos.y;
-    this.body.width=10;
+    this.body.width=5;
     this.body.height=owner.body.height;
     this.model=new Model(this);
+    this.setColor(0,0,0,0.0);
     this.timer=0;
+  }
+
+  setColor(){
+    this.model.renderAble.setColor.apply(this.model.renderAble,arguments);
   }
 
   inputAction(){
@@ -153,9 +158,9 @@ class UICursor extends GameObject{
     if(++this.timer>60){
       this.timer=0;
     }else if(this.timer>30){
-      this.model.renderAble.setColor(0,0,0,0.2);
+      this.setColor(0,0,0,0.2);
     }else if(this.timer>0){
-      this.model.renderAble.setColor(0,0,0,0.9);
+      this.setColor(0,0,0,0.9);
     }
   }
 
@@ -177,39 +182,42 @@ class UITextField extends UIButton {
     this.text = "";
     this.displayText = "";
     this.buffer = [];
+    // this.maxLength=10;
 
     this.currentCursorIndex=0;
     this.cursor=new UICursor(this);
   }
 
-  getTextWidth(){
-    var total=0;
-    for(let i=0;i<this.displayText.length;i++){
-      total+=display.textCtx.measureText(this.displayText.charAt(i)).width;
-    }
-    return total;
-  }
-
-  getTextLeastMaxIndex(){
-    var total=0;
-    var i=-1;
-    for(i=0;i<this.displayText.length;i++){
-      let w=display.textCtx.measureText(this.displayText.charAt(i)).width;
-      if(total+w<this.body.width)
-        total+=w;
-      else break;
-    }
-    return i;
-  }
+  //현재 textCtx 와 gl좌표계가 달라 단위 통일이 안됨
+  // getTextWidth(){
+  //   var total=0;
+  //   for(let i=0;i<this.displayText.length;i++){
+  //     total+=display.textCtx.measureText(this.displayText.charAt(i)).width;
+  //   }
+  //   return total;
+  // }
+  //
+  // getTextLeastMaxIndex(){
+  //   var total=0;
+  //   var i=-1;
+  //   for(i=0;i<this.displayText.length;i++){
+  //     let w=display.textCtx.measureText(this.displayText.charAt(i)).width;
+  //     if(total+w<this.body.width)
+  //       total+=w;
+  //     else break;
+  //   }
+  //   return i;
+  // }
 
   keyDown(e) {
-    console.log(e,this.body);
+
     if(!this.isFocus)
       return;
     if (e.keyCode == 21) {
       this.isHangulMode = !this.isHangulMode;
       return;
     }
+
     this.displayText="";
     //만약 영어 자판에 해당하면
     if(65<=e.keyCode&&e.keyCode<=90){
@@ -236,8 +244,6 @@ class UITextField extends UIButton {
         this.text=a+b+char+c;
         this.currentCursorIndex++;
       }
-
-
     }else{
       switch (e.key) {
 
@@ -301,7 +307,9 @@ class UITextField extends UIButton {
         case "Alt":
         case "Tab":
         case "F1":case "F2":case "F3":case "F4": case "F5": case "F6":
-        case "F7":case "F8":case "F9":case "F10":case "F11":case "F12":break;
+        case "F7":case "F8":case "F9":case "F10":case "F11":case "F12":
+        case "ArrowUp":
+        case "ArrowDown":break;
         default:{
           let char=e.key;
           //기본입력 처리
@@ -354,7 +362,11 @@ class UITextField extends UIButton {
 
   update() {
     super.update();
-    this.cursor.update();
+    if(this.isFocus)
+      this.cursor.update();
+    else{
+      this.cursor.setColor(0,0,0,0.0);
+    }
   }
 
   render(display, xOffset, yOffset) {
@@ -363,12 +375,7 @@ class UITextField extends UIButton {
     display.textCtx.font = (this.body.height * 0.8) + "px Verdana";
     //text rendering
     var txt="";
-    if(this.getTextWidth()>this.body.width){
-      let len=this.getTextLeastMaxIndex();
-      txt=this.displayText.substr(0,len);
-    }
-    else
-      txt=this.displayText;
+    txt=this.displayText;
     display.fillText(txt, xOffset + this.getX(), yOffset + this.getY() + this.body.height / 1.2);
     //현재 한글 완성중인지 표시
       // var s="";

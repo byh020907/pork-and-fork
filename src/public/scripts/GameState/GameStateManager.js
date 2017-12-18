@@ -6,6 +6,8 @@ var GameStateManager=function(){
 
   this.list.push(new TitleState());
   this.list.push(new LoginState());
+  this.list.push(new RegisterState());
+  this.list.push(new LobbyState());
   this.list.push(new MainGameState());
 
   this.setState(GameState.TITLE_STATE);
@@ -43,7 +45,9 @@ function GameState(){
 
 GameState.TITLE_STATE=0;
 GameState.LOGIN_STATE=1;
-GameState.MAINGAME_STATE=2;
+GameState.REGISTER_STATE=2;
+GameState.LOBBY_STATE=3;
+GameState.MAINGAME_STATE=4;
 
 //미구현 함수(상속)
 GameState.prototype.init=function(){}
