@@ -11,7 +11,7 @@ class Circle extends Entity{
 
     this.computeMass(this.body, 0.1);
 
-    this.model = new Model(this, TextureLoader.get("images/circle.png"));
+    this.model = new TextureModel(this, TextureLoader.get("images/circle.png"));
 
     this.collision = new CircleCollision(this, this.body);
     this.ordinal = 0;

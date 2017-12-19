@@ -66,11 +66,11 @@ UIManager.prototype.isKeyUp=function(e){
 
 
 class UIComponent extends GameObject{
-  constructor(texture,x,y,width,height){
+  constructor(sprite,x,y,width,height){
     super();
     this.id=Math.random();
-    if(texture!=null)
-        this.model=new Model(this,texture);
+    if(sprite!=null)
+        this.model=new TextureModel(this,sprite);
 
     //local 좌표//렌더링용//기본적으로 입력한값을 토대로 왼쪽 상단을 기준으로 잡는다.
     this.body=new UIBody(this);
@@ -86,12 +86,12 @@ class UIComponent extends GameObject{
 
   }
 
-  super_render(){
-    GameObject.prototype.render.apply(this,arguments);
+  setTexture(){
+    this.model.setTexture.apply(this.model,arguments);
   }
 
-  setTexture(texture){
-    this.model.setTexture(texture);
+  setUV(){
+    this.model.setUV.apply(this.model,arguments);
   }
 
   init(uiPanel){
@@ -153,11 +153,11 @@ class UIComponent extends GameObject{
 
 
 class UIPanel extends UIComponent{
-  constructor(texture,x,y,width,height){
-    super(texture,x,y,width,height);
+  constructor(sprite,x,y,width,height){
+    super(sprite,x,y,width,height);
     this.components=[];
     this.hasTexture;
-    if(texture!=null)this.hasTexture=true;
+    if(sprite!=null)this.hasTexture=true;
           else this.hasTexture=false;
   }
 

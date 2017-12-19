@@ -1,8 +1,7 @@
 "use strict"
 
-function AnimationModel(owner,texture,startX,startY,width,height,maxFrame,frameDelay) {
-   Model.apply(this,[owner,texture]);
-   this.texture=this.renderAble;
+function AnimationModel(owner,sprite,startX,startY,width,height,maxFrame,frameDelay) {
+   TextureModel.apply(this,[owner,sprite]);
    this.startX=startX;
    this.startY=startY;
    this.width=width;
@@ -98,8 +97,9 @@ AnimationModel.prototype.render = function () {
       let sy=this.startY/this.texture.getImageHeight();
       let fx=sx+this.width/this.texture.getImageWidth();
       let fy=sy+this.height/this.texture.getImageHeight();
-
-      this.texture.render(mvMatrix,pMtrx,sx,sy,fx,fy);
+      
+      this.sprite.setUV(sx,sy,fx,fy);
+      this.sprite.render(mvMatrix,pMtrx);
     }break;
 
     default: OverloadingException();

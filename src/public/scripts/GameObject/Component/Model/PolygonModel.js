@@ -1,7 +1,7 @@
 "use strict"
 
 function PolygonModel(owner,body){
-  Model.apply(this,[owner]);
+  ShapeModel.apply(this,[owner]);
 
   this.vertices=body.vertices;
   var verticesData=[];
@@ -57,7 +57,7 @@ PolygonModel.prototype.render = function (pMtrx,body) {
 
       mat4.rotateZ(mvMatrix, mvMatrix, rad);
 
-      this.renderAble.render(mvMatrix,pMtrx);
+      this.shape.render(mvMatrix,pMtrx);
     }break;
 
     default: OverloadingException();

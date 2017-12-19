@@ -1,8 +1,8 @@
 "use strict"
 class UIButton extends UIComponent {
 
-  constructor(texture, x, y, width, height, buttonListener) {
-    super(texture, x, y, width, height);
+  constructor(sprite, x, y, width, height, buttonListener) {
+    super(sprite, x, y, width, height);
     this.buttonListener = buttonListener;
     this.inside = false;
     this.pressed = false;
@@ -109,13 +109,13 @@ class UILabel extends GameObject{
     this.body.pos.y=owner.body.pos.y;
     this.body.width=owner.body.width;
     this.body.height=owner.body.height;
-    this.model=new Model(this);//그냥 shape모델
-    this.setColor(0,0,0,0.0);
+    this.model=new ShapeModel(this);
+    this.model.setColor(0,0,0,0.0);
     this.timer=0;
   }
 
   setColor(){
-    this.model.renderAble.setColor.apply(this.model.renderAble,arguments);
+    this.model.setColor.apply(this.model,arguments);
   }
 
   render(display,xOffset,yOffset){
@@ -135,13 +135,13 @@ class UICursor extends GameObject{
     this.body.pos.y=owner.body.pos.y;
     this.body.width=5;
     this.body.height=owner.body.height;
-    this.model=new Model(this);
-    this.setColor(0,0,0,0.0);
+    this.model=new ShapeModel(this);
+    this.model.setColor(0,0,0,0.0);
     this.timer=0;
   }
 
   setColor(){
-    this.model.renderAble.setColor.apply(this.model.renderAble,arguments);
+    this.model.setColor.apply(this.model,arguments);
   }
 
   inputAction(){
@@ -158,9 +158,9 @@ class UICursor extends GameObject{
     if(++this.timer>60){
       this.timer=0;
     }else if(this.timer>30){
-      this.setColor(0,0,0,0.2);
+      this.model.setColor(0,0,0,0.2);
     }else if(this.timer>0){
-      this.setColor(0,0,0,0.9);
+      this.model.setColor(0,0,0,0.9);
     }
   }
 
@@ -175,8 +175,8 @@ class UICursor extends GameObject{
 }
 
 class UITextField extends UIButton {
-  constructor(texture, x, y, width, height, buttonListener) {
-    super(texture, x, y, width, height, buttonListener);
+  constructor(sprite, x, y, width, height, buttonListener) {
+    super(sprite, x, y, width, height, buttonListener);
     this.isFocus=false;
     this.isHangulMode = false;
     this.text = "";
@@ -365,7 +365,7 @@ class UITextField extends UIButton {
     if(this.isFocus)
       this.cursor.update();
     else{
-      this.cursor.setColor(0,0,0,0.0);
+      this.cursor.model.setColor(0,0,0,0.0);
     }
   }
 
@@ -390,8 +390,8 @@ class UITextField extends UIButton {
 }
 
 class UIList extends UIPanel {
-  constructor(texture, x, y, width, height) {
-    super(texture, x, y, width, height);
+  constructor(sprite, x, y, width, height) {
+    super(sprite, x, y, width, height);
   }
 
   addComponent(component) {

@@ -30,7 +30,7 @@ class RegisterState extends GameState {
 
     var goToRegisterBtn=new UIButton(this.blankImage, 150, -100, 150, 100, null);
 
-    var idText=new UITextField(this.blankImage, 150, 200, 400, 50, {
+    var idText=new UITextField(this.blankImage, 150, 150-50, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -46,7 +46,7 @@ class RegisterState extends GameState {
       }
     });
 
-    var passwordText=new UITextField(this.blankImage, 150, 300, 400, 50, {
+    var passwordText=new UITextField(this.blankImage, 150, 250-50, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -62,7 +62,7 @@ class RegisterState extends GameState {
       }
     });
 
-    var R_passwordText=new UITextField(this.blankImage, 150, 300, 400, 50, {
+    var R_passwordText=new UITextField(this.blankImage, 150, 350-50, 400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -75,6 +75,23 @@ class RegisterState extends GameState {
         uiButton.label.setColor(0,0,0,0.2);
       },
       released: function(uiButton) {
+      }
+    });
+
+    var submitBtn=new UIButton(this.blankImage, loginPanel.body.width/2-75, 400, 150, 70, {
+      entered: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.1);
+      },
+      exited: function(uiButton) {
+        uiButton.isFocus=false;
+        uiButton.label.setColor(0,0,0,0.0);
+      },
+      pressed: function(uiButton) {
+        uiButton.isFocus=true;
+        uiButton.label.setColor(0,0,0,0.2);
+      },
+      released: function(uiButton) {
+        gsm.setState(GameState.LOBBY_STATE);
       }
     });
 
@@ -84,6 +101,7 @@ class RegisterState extends GameState {
     loginPanel.addComponent(idText);
     loginPanel.addComponent(passwordText);
     loginPanel.addComponent(R_passwordText);
+    loginPanel.addComponent(submitBtn);
     mainPanel.addComponent(loginPanel);
     uiManager.addPanel(mainPanel);
   }

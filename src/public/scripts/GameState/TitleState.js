@@ -11,7 +11,7 @@ TitleState.prototype.init=function(){
   var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
 
   //메인 로고
-  mainPanel.addComponent(new UIButton(TextureLoader.get("images/cloud.png"),display.getWidth()/2-100,display.getHeight()/2-100,200,100,{
+  mainPanel.addComponent(new UIButton(Sprite.PAF_LOGO,display.getWidth()/2-100,display.getHeight()/2-100,200,100,{
     entered:function(uiButton){
       uiButton.body.width=200/1.5;
       uiButton.body.height=100/1.5;
@@ -25,7 +25,7 @@ TitleState.prototype.init=function(){
   }));
 
   //start버튼
-  mainPanel.addComponent(new UIButton(TextureLoader.get("images/cloud.png"),display.getWidth()/2-100,display.getHeight()/2+100,200,100,{
+  mainPanel.addComponent(new UIButton(Sprite.PAF_LOGO,display.getWidth()/2-100,display.getHeight()/2+100,200,100,{
     entered:function(uiButton){
       uiButton.body.width=200/1.1;
       uiButton.body.height=100/1.1;

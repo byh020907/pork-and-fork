@@ -155,7 +155,7 @@ Display.prototype.render=function(renderAble,x,y,width,height,rad){
   renderAble.render(mvMatrix,this.getProjection());
 }
 
-function createTexture(texture,src) {
+function createTexture(texture,image) {
 
     var a=arguments;
 
@@ -172,11 +172,8 @@ function createTexture(texture,src) {
 
     switch (a.length) {
       case 2:{
-        texture.image = new Image();
-        texture.image.onload = function () {
-            handleLoadedTexture(texture);
-        }
-        texture.image.src = src;
+        texture.image = image;
+        handleLoadedTexture(texture);
       }break;
 
       //text,font
