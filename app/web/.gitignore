@@ -1,8 +1,0 @@
-# ignore node modules
-/node_modules/ 
-
-# ignore server log files
-/logs/
-
-# ignore config files
-config.json

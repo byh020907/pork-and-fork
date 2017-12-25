@@ -1,0 +1,9 @@
+# golang package directory
+/pkg/
+
+# golang binary directory
+/bin/
+
+# govendor cache directory
+/.cache/
+
