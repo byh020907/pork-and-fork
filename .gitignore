@@ -1,0 +1,9 @@
+# golang binary files
+/app/bin/
+
+# golang package files
+/app/pkg/
+
+# govendor cached files
+/app/.cached/
+
