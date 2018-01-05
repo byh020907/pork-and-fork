@@ -405,12 +405,11 @@ function CirclevsPolygon(m, A, B) {
     var separation = -Number.MAX_VALUE;
     var faceNormalIndex = -1;
 
-
     // 두 다각형의 모든 변에 대해 루프
     for (let i = 0; i < B.vertices.length; i++) {
         // get the current vertex
         let s = B.getNormal(i).dot( center.sub( B.vertices[i] ) );
-
+        
         if (s > A.radius)
             return;
 

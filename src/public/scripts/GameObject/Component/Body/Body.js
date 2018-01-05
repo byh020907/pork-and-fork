@@ -3,7 +3,7 @@
 function Body(owner, vertices) {
   Component.apply(this, [owner]);
 
-  this.bound = new Rectangle();
+  this.bound = new Rectangle(0,0,100,100);
   //텍스쳐 렌더링할대 쓰는 변수
   this.width = 100;
   this.height = 100;
@@ -12,9 +12,9 @@ function Body(owner, vertices) {
 
   this.vertices = vertices;
 
-  this.pos = new Vector2d(0, 0);
-  this.velocity = new Vector2d(0, 0);
-  this.force = new Vector2d(0, 0);
+  this.pos = new Vector2d();
+  this.velocity = new Vector2d();
+  this.force = new Vector2d();
 
   // Angular components
   this.rotateAngle = 0; // radians
@@ -30,11 +30,8 @@ function Body(owner, vertices) {
   this.inertia = 1;
   this.inv_inertia = 1/this.inertia;
 
-  this.staticFriction = 0.5;
-  this.dynamicFriction = 0.3;
-
-  //중력 및 외부 힘
-  this.G = new Vector2d();
+  this.staticFriction = 0.5*2;
+  this.dynamicFriction = 0.3*2;
 }
 
 inherit(Component, Body);
@@ -46,6 +43,7 @@ Body.prototype.getNormal = function(index) {
   let p1 = this.vertices[i];
   // get the next vertex
   let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
+
   // subtract the two to get the edge vector
   var edge = p1.sub(p2);
 
@@ -77,6 +75,11 @@ Body.prototype.getSupport = function(dir) {
 Body.prototype.applyForce = function(f) {
   // force += f;
   this.force.addLocal(f);
+}
+
+Body.prototype.applyTorque = function(t) {
+  // force += f;
+  this.torque+=t;
 }
 
 Body.prototype.applyImpulse = function(impulse, contactVector) {

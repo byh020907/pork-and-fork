@@ -5,13 +5,12 @@ class Circle extends Entity{
   constructor(x, y, radius) {
     super();
     this.body = new Body(this);
+    this.density=0.001;
     this.setRadius(radius);
     this.body.pos.x = x;
     this.body.pos.y = y;
 
-    this.computeMass(this.body, 0.1);
-
-    this.model = new TextureModel(this, TextureLoader.get("images/circle.png"));
+    this.model = new TextureModel(this, Sprite.CIRCLE);
 
     this.collision = new CircleCollision(this, this.body);
     this.ordinal = 0;
@@ -22,15 +21,12 @@ class Circle extends Entity{
     body.inv_mass = (body.mass) ? 1.0 / body.mass : 0.0;
     body.inertia = body.mass * body.radius * body.radius;
     body.inv_inertia = (body.inertia) ? 1.0 / body.inertia : 0.0;
-
-    // console.log(body.mass,body.inv_mass,body.inertia,body.inv_inertia);
-    body.inertia = 12000;
-    body.inv_inertia = 1 / body.inertia;
   }
 
   setRadius(radius) {
     this.body.radius = radius;
     this.body.width = this.body.height = radius * 2;
+    this.computeMass(this.body, this.density);
   }
 
   setStatic() {

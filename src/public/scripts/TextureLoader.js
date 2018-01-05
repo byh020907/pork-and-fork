@@ -1,34 +1,68 @@
-"use strict"
+// "use strict"
 
-var TextureLoader=(function(){
-  var self=function(){
-    this.list={};
+(function(w){
+  class TextureLoader{
+
+    constructor(srcList,callback){
+      this.list={};
+      this.srcList=srcList;
+      this.loadingNum=0;
+      this.loadComplete=callback;
+
+      this.loadAllImage();
+
+      var me=this;
+
+      var timer = setInterval(function() {
+           if (me.loadingNum == me.srcList.length) {
+                clearInterval(timer);
+                //모든 이미지 로딩이 끝나면 최종적으로 텍스쳐를 로딩하고
+                me.loadAllTexture();
+                //끝났을시 실행할 함수를 실행
+                me.loadComplete();
+           }else{
+             console.log("로딩중...",me.loadingNum);
+           }
+      }, 10);
+
+    }
+
+    loadAllImage(){
+      var me=this;
+
+      for(let i=0;i<this.srcList.length;i++){
+        let image=new Image();
+        image.onload=function(){
+          me.loadingNum++;
+        };
+        image.src=this.srcList[i];
+        this.list[this.srcList[i]]=image;
+      }
+
+    }
+
+    loadAllTexture(){
+
+      for(let i=0;i<this.srcList.length;i++){
+        this.list[this.srcList[i]]=new Texture(this.list[this.srcList[i]]);
+      }
+
+    }
+
+    get(src){
+      return this.list[src];
+    }
+
   }
 
-  self.prototype.load=function(src){
-    this.list[src]=new Texture(src);
-  }
-
-  self.prototype.get=function(src){
-    return this.list[src];
-  }
-
-  return new self();
-}());
-
-TextureLoader.load("images/blankImage.png");
-TextureLoader.load("images/cloud.png");
-TextureLoader.load("images/bat.png");
-TextureLoader.load("images/cuby.png");
-TextureLoader.load("images/circle.png");
-TextureLoader.load("images/Pig1-Sheet.png");
-TextureLoader.load("images/P&F-Sprite.png");
-
-Sprite.PAF_LOGO=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,556,335,true);
-Sprite.BROWN=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,335/1024,87/1024,422/1024);
-Sprite.YELLOW=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,1,1);
-Sprite.SLIGHTLY_GRAY=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,1,1);
-Sprite.GREEN=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),261,335,348,422,1);
-Sprite.BEIGE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,1,1);
-Sprite.WHITE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,1,1);
-Sprite.GRAY=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,0,1,1);
+  w.TextureLoader=new TextureLoader(["images/blankImage.png",
+                  "images/cloud.png",
+                  "images/Pig1-Sheet.png",
+                  "images/P&F-Sprite.png",
+                  "images/circle.png"
+                ],function(){
+                  console.log("로딩 완료");
+                  //main.js에 있다.
+                  init();
+                });
+}(window));

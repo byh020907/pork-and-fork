@@ -7,80 +7,17 @@ function MainGameState(){
 inherit(GameState,MainGameState);
 
 MainGameState.prototype.init=function(){
-  // this.t=new Texture("www.jrr.kr","bold 20px Arial");
   this.game.init();
   var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
-  mainPanel.addComponent(new UIButton(TextureLoader.get("images/cloud.png"),0,display.getHeight()/2,200,100,{
-    entered:function(uiButton){
-      uiButton.body.width=200/1.5;
-      uiButton.body.height=100/1.5;
-      console.log("enter");
-    },
-    exited:function(uiButton){
-      uiButton.body.width=200;
-      uiButton.body.height=100;
-      console.log("exit");
-    },
-    pressed:function(uiButton){
-      console.log("press");
-    },
-    released:function(uiButton){
-      console.log("release");
-    }
-  }));
 
-  mainPanel.addComponent(new UITextField(TextureLoader.get("images/blankImage.png"),0,display.getHeight()-200/2,500,100,{
-    entered:function(uiButton){
-      // uiButton.body.width=200/1.5;
-      // uiButton.body.height=100/1.5;
-      // console.log("enter");
-    },
-    exited:function(uiButton){
-      // uiButton.body.width=200;
-      // uiButton.body.height=100;
-      // console.log("exit");
-      uiButton.isFocus=false;
-    },
-    pressed:function(uiButton){
-      // console.log("press");
-      uiButton.isFocus=true;
-    },
-    released:function(uiButton){
-      // console.log("release");
-    }
-  }));
-
-  // var list=new UIList(TextureLoader.get("images/blankImage.png"),500,0,200,500);
-  // for(var i=0;i<4;i++){
-  //   list.addComponent(new UIButton(TextureLoader.get("images/cloud.png"),0,0,200,100+i*50,{
-  //     entered:function(uiButton){
-  //       console.log("enter");
-  //     },
-  //     exited:function(uiButton){
-  //       console.log("exit");
-  //     },
-  //     pressed:function(uiButton){
-  //
-  //       console.log("press");
-  //     },
-  //     released:function(uiButton){
-  //       for(var i=0;i<list.components.length;i++){
-  //         if(list.components[i]==uiButton)
-  //         list.deleteComponent(i);
-  //       }
-  //       console.log("release");
-  //     }
-  //   }));
-  // }
   uiManager.addPanel(mainPanel);
-  // uiManager.addPanel(list);
 }
 MainGameState.prototype.reset=function(){
   this.game.reset();
   this.game=null;
   uiManager.clear();
 }
-let i=0;
+
 MainGameState.prototype.update=function(){
   // var mvMatrix=mat4.create();
   // mat4.identity(mvMatrix);

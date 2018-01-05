@@ -8,15 +8,28 @@ var GameStateManager=function(){
   this.list.push(new LoginState());
   this.list.push(new RegisterState());
   this.list.push(new LobbyState());
+  this.list.push(new CreateRoomState());
+  this.list.push(new InRoomState());
   this.list.push(new MainGameState());
 
   this.setState(GameState.TITLE_STATE);
+
+  //게임 전반의 적용되는 값을 저장할수 있는 객체(ex:아이디)
+  this.cookie={};
 }
 
-GameStateManager.prototype.setState=function(state){
+GameStateManager.prototype.setState=function(state,data){
   this.list[this.currentState].reset();
+  //전의 상태에서 넘겨받은 정보를 null로 초기화한다.
+  this.list[this.currentState].receivedData=null;
 	this.currentState = state;
-	this.list[this.currentState].init();
+
+  //넘겨받은 데이터의 유무에 따라 설정
+  if(data!=null)
+    this.list[this.currentState].receivedData=data;
+  //초기화
+  this.list[this.currentState].init();
+
   console.log(this.list[this.currentState]);
 }
 
@@ -43,11 +56,17 @@ function GameState(){
 
 }
 
-GameState.TITLE_STATE=0;
-GameState.LOGIN_STATE=1;
-GameState.REGISTER_STATE=2;
-GameState.LOBBY_STATE=3;
-GameState.MAINGAME_STATE=4;
+(function(){
+  let i=0;
+
+  GameState.TITLE_STATE=i++;
+  GameState.LOGIN_STATE=i++;
+  GameState.REGISTER_STATE=i++;
+  GameState.LOBBY_STATE=i++;
+  GameState.CREATE_ROOM_STATE=i++;
+  GameState.IN_ROOM_STATE=i++;
+  GameState.MAINGAME_STATE=i++;
+}());
 
 //미구현 함수(상속)
 GameState.prototype.init=function(){}

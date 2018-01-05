@@ -56,8 +56,29 @@ Mat2d.prototype.setRotation=function(rad){
 }
 
 function Vector2d(x,y){
-  this.x=x||0;
-  this.y=y||0;
+  var a=arguments;
+
+  switch (a.length) {
+
+    case 0:{
+      this.x=0;
+      this.y=0;
+    }break;
+
+    case 1:{
+      this.x=x.x;
+      this.y=x.y;
+    }break;
+
+    case 2:{
+      this.x=x;
+      this.y=y;
+    }break;
+
+    default:OverloadingException();
+
+  }
+
 }
 
 Vector2d.cross=function(s,v){
@@ -105,6 +126,11 @@ Vector2d.prototype.subLocal = function(v) {
 
 Vector2d.prototype.scale = function(s) {
     return new Vector2d(this.x * s, this.y * s);
+};
+
+Vector2d.prototype.scaleLocal = function(s) {
+  this.x*=s;
+  this.y*=s;
 };
 
 Vector2d.prototype.dot = function(v) {
