@@ -86,14 +86,6 @@ class UIComponent extends GameObject{
 
   }
 
-  setTexture(){
-    this.model.setTexture.apply(this.model,arguments);
-  }
-
-  setUV(){
-    this.model.setUV.apply(this.model,arguments);
-  }
-
   init(uiPanel){
     this.panel=uiPanel;
     this.collision.setPos(this.getX()+uiPanel.getWorldX(),this.getY()+uiPanel.getWorldY());
@@ -171,6 +163,10 @@ class UIPanel extends UIComponent{
   addComponent(component){
     component.init(this);
     this.components.push(component);
+  }
+
+  getComponent(id){
+    return this.components[id];
   }
 
   init(uiPanel){

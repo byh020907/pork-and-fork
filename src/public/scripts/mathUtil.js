@@ -1,5 +1,154 @@
 "use strict"
 
+class Vector2d extends PoolObject{
+
+  constructor(x,y){
+    this.init(x,y);
+  }
+
+  init(x,y){
+    var a=arguments;
+
+    switch (a.length) {
+
+      case 0:{
+        this.x=0;
+        this.y=0;
+      }break;
+
+      case 1:{
+        this.x=x.x;
+        this.y=x.y;
+      }break;
+
+      case 2:{
+        this.x=x;
+        this.y=y;
+      }break;
+
+      default:OverloadingException();
+
+    }
+  }
+
+  destructor(){
+    this.x=this.y=0;
+  }
+
+  set(x,y) {
+    var a=arguments;
+    switch (a.length) {
+      case 1:{
+        this.x=a[0].x;
+        this.y=a[0].y;
+      }break;
+
+      case 2:{
+        this.x=x;
+        this.y=y;
+      }break;
+
+      default: OverloadingException();
+    }
+  }
+
+  clone(v) {
+    return new Vector2d(this.x,this.y);
+  }
+
+  add(v) {
+    return new Vector2d(v.x + this.x, v.y + this.y);
+  }
+
+  addLocal(v) {
+    this.x+=v.x;
+    this.y+=v.y;
+  }
+
+  sub(v) {
+    return new Vector2d(this.x - v.x, this.y - v.y);
+  }
+
+  subLocal(v) {
+    this.x-=v.x;
+    this.y-=v.y;
+  }
+
+  scale(s) {
+    return new Vector2d(this.x * s, this.y * s);
+  }
+
+  scaleLocal(s) {
+    this.x*=s;
+    this.y*=s;
+  }
+
+  dot(v) {
+    return (this.x * v.x + this.y * v.y);
+  }
+
+  /* Normally the vector cross product function returns a vector. But since we know that all our vectors will only be 2D (x and y only), any cross product we calculate will only have a z-component. Since we don't have a 3D vector class, let's just return the z-component as a scalar. We know that the x and y components will be zero. This is absolutely not the case for 3D. */
+  cross(v) {
+    return (this.x * v.y - this.y * v.x);
+  }
+
+  rotate(rad, vector) {
+
+    var a=arguments;
+    switch (a.length) {
+      case 1:{
+        //점을 0,0을 기준으로 rad만큼 돌린다.
+        var x=this.x;
+        var y=this.y;
+        this.x = x * Math.cos(rad) - y * Math.sin(rad);
+        this.y = x * Math.sin(rad) + y * Math.cos(rad);
+      }break;
+
+      case 2:{
+        var x = this.x - vector.x;
+        var y = this.y - vector.y;
+
+        var x_prime = vector.x + ((x * Math.cos(rad)) - (y * Math.sin(rad)));
+        var y_prime = vector.y + ((x * Math.sin(rad)) + (y * Math.cos(rad)));
+
+        return new Vector2d(x_prime, y_prime);
+      }break;
+
+      default: OverloadingException();
+
+    }
+
+  }
+
+  length() {
+    return Math.sqrt(this.x*this.x+this.y*this.y);
+  }
+
+  lengthSquared() {
+    return this.x*this.x+this.y*this.y;
+  }
+
+  normalize() {
+    var length=this.length();
+    if(length==0)
+    console.error("length is 0");
+    return new Vector2d(this.x/length,this.y/length);
+  }
+
+  normalizeLocal() {
+    var length=this.length();
+    if(length!=0){
+      this.x/=length;
+      this.y/=length;
+    }
+  }
+
+}
+
+Vector2d.cross=function(s,v){
+  return new Vector2d(-s * v.y, s * v.x);
+}
+
 function Mat2d(){
   var a=arguments;
   switch (a.length) {
@@ -54,144 +203,6 @@ Mat2d.prototype.setRotation=function(rad){
   this.m10=Math.sin(rad);
   this.m11=Math.cos(rad);
 }
-
-function Vector2d(x,y){
-  var a=arguments;
-
-  switch (a.length) {
-
-    case 0:{
-      this.x=0;
-      this.y=0;
-    }break;
-
-    case 1:{
-      this.x=x.x;
-      this.y=x.y;
-    }break;
-
-    case 2:{
-      this.x=x;
-      this.y=y;
-    }break;
-
-    default:OverloadingException();
-
-  }
-
-}
-
-Vector2d.cross=function(s,v){
-  return new Vector2d(-s * v.y, s * v.x);
-}
-
-Vector2d.prototype.set = function(x,y) {
-  var a=arguments;
-  switch (a.length) {
-    case 1:{
-      this.x=a[0].x;
-      this.y=a[0].y;
-    }break;
-
-    case 2:{
-      this.x=x;
-      this.y=y;
-    }break;
-
-    default: OverloadingException();
-  }
-};
-
-Vector2d.prototype.clone = function(v) {
-    return new Vector2d(this.x,this.y);
-};
-
-Vector2d.prototype.add = function(v) {
-    return new Vector2d(v.x + this.x, v.y + this.y);
-};
-
-Vector2d.prototype.addLocal = function(v) {
-    this.x+=v.x;
-    this.y+=v.y;
-};
-
-Vector2d.prototype.sub = function(v) {
-    return new Vector2d(this.x - v.x, this.y - v.y);
-};
-
-Vector2d.prototype.subLocal = function(v) {
-  this.x-=v.x;
-  this.y-=v.y;
-};
-
-Vector2d.prototype.scale = function(s) {
-    return new Vector2d(this.x * s, this.y * s);
-};
-
-Vector2d.prototype.scaleLocal = function(s) {
-  this.x*=s;
-  this.y*=s;
-};
-
-Vector2d.prototype.dot = function(v) {
-    return (this.x * v.x + this.y * v.y);
-};
-
-/* Normally the vector cross product function returns a vector. But since we know that all our vectors will only be 2D (x and y only), any cross product we calculate will only have a z-component. Since we don't have a 3D vector class, let's just return the z-component as a scalar. We know that the x and y components will be zero. This is absolutely not the case for 3D. */
-Vector2d.prototype.cross = function(v) {
-    return (this.x * v.y - this.y * v.x);
-};
-
-Vector2d.prototype.rotate = function(rad, vector) {
-
-  var a=arguments;
-  switch (a.length) {
-    case 1:{
-      //점을 0,0을 기준으로 rad만큼 돌린다.
-      var x=this.x;
-      var y=this.y;
-      this.x = x * Math.cos(rad) - y * Math.sin(rad);
-      this.y = x * Math.sin(rad) + y * Math.cos(rad);
-    }break;
-
-    case 2:{
-      var x = this.x - vector.x;
-      var y = this.y - vector.y;
-
-      var x_prime = vector.x + ((x * Math.cos(rad)) - (y * Math.sin(rad)));
-      var y_prime = vector.y + ((x * Math.sin(rad)) + (y * Math.cos(rad)));
-
-      return new Vector2d(x_prime, y_prime);
-    }break;
-
-    default: OverloadingException();
-
-  }
-
-};
-
-Vector2d.prototype.length = function() {
-    return Math.sqrt(this.x*this.x+this.y*this.y);
-};
-
-Vector2d.prototype.lengthSquared = function() {
-    return this.x*this.x+this.y*this.y;
-};
-
-Vector2d.prototype.normalize = function() {
-    var length=this.length();
-    if(length==0)
-      console.error("length is 0");
-    return new Vector2d(this.x/length,this.y/length);
-};
-
-Vector2d.prototype.normalizeLocal = function() {
-    var length=this.length();
-    if(length!=0){
-      this.x/=length;
-      this.y/=length;
-    }
-};
 
 
 function getAngle(){

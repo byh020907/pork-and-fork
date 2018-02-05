@@ -3,31 +3,18 @@
 class Game{
   constructor(){
     this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
+    this.player;
     this.players=[];
     this.world=new World(new Rectangle(-1500,-1500,3000,3000));
+    this.timer=0;
   }
 
-  init(){
+  init(users){
     this.camera.setZoom(new Vector2d(1,1));
     this.camera.setPos(new Vector2d(0,0));
 
-    this.player=new Player(0,0);
-    this.player.body.restitution=0.3;
+    this.player=new Player("TempName",Math.random()*500-250,0);
     this.world.addBody(this.player.body);
-
-    // this.player2=new DoubleRect(0,0,50);
-    // // this.player2.body.restitution=0.3;
-    // // this.player2.setColor(1,0,0,0.5);
-    // this.world.addBody(this.player2.box.body);
-    // this.world.addBody(this.player2.box2.body);
-
-    // this.player2=new Polygon(350,0);
-    // this.player2.body.angularVelocity=0.01;
-    // this.player2.setColor(0,1,1,1);
-    // this.player2.setRegularPolygon(3,100);
-    // this.player2.body.setMass(1);
-    // this.world.addBody(this.player2.body);
-
     var ground=new Polygon(0,400);
     ground.setVertices([
       new Vector2d(-1000,-50),
@@ -68,18 +55,6 @@ class Game{
     // c.body.angularVelocity=0.1;
     // c.setStatic();
     // this.world.addBody(c.body);
-
-    // let x=Math.random()*1000-500;
-    // let y=Math.random()*1000-500;
-    //
-    // for(let i=0;i<5;i++){
-    //   let p=new Polygon(x,y);
-    //   p.setRegularPolygon(3+i,100);
-    //   p.body.setMass(1);
-    //   this.world.addBody(p.body);
-    // }
-
-    // this.player.body.applyForce(new Vector2d(-5000,0));
   }
 
   reset(){
@@ -89,15 +64,7 @@ class Game{
 
   update(){
     this.camera.follow(this.player.body,0.05);
-    // var length=150;
-    // var pos=new Vector2d(0,-1200);
-    // var k=0.001;
-    // pos.subLocal(this.player.body.pos);
-    // var currentLength=pos.length();
-    // pos.normalizeLocal();
-    // var stretch=length-currentLength;
-    //
-    // this.player.body.applyForce(pos.scale(-k*stretch));
+
     this.player.body.angularVelocity+=0.05*(-this.player.body.rotateAngle);
 
     this.world.update();
@@ -135,9 +102,6 @@ class Game{
         c.body.applyForce(v);
         this.world.addBody(c.body);
       }
-
-      // this.player2.body.applyTorque(-10000);
-      // this.player2.circle.body.applyTorque(-10000);
     }
 
     //zoom
@@ -150,23 +114,29 @@ class Game{
       this.camera.setZoom(this.camera.zoomScale.add(new Vector2d(-0.1,-0.1)));
     }
 
-    //p2
+  }
 
+  messageProcess(message) {
+    switch (message.Protocol) {
 
-    if(isKeyDown(37)){
-      this.player2.box.body.applyForce(new Vector2d(-10,0));
-    }
+      case "DataSyncReport":{
+        for(let p of this.players){
+          if(p.name==message.UserID){
+            p.body.pos.set(message.Pos.x,message.Pos.y);
+            p.body.velocity.set(message.Velocity.x,message.Velocity.y);
+          }
+        }
+      }break;
 
-    if(isKeyDown(38)){
-      this.player2.box.body.force.y=-10;
-    }
+      case "UserInputReport":{
+        for(let p of this.players){
+          if(p.name==message.UserID)
+            p.keys[message.KeyCode]=message.Value;
+        }
+      }break;
 
-    if(isKeyDown(39)){
-      this.player2.box.body.force.x=10;
-    }
+      default:console.log("UnknownProtocol",message);
 
-    if(isKeyDown(40)){
-      this.player2.box.body.force.y=10;
     }
   }
 

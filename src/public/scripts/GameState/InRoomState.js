@@ -16,6 +16,28 @@ class InRoomState extends GameState {
 
     roomPanel.clear();
 
+    var startBtn=new UIButton(Sprite.BROWN, this.roomPanel.body.width/2-220, 10, 200, 50, {
+      entered: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.1);
+      },
+
+      exited: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.0);
+      },
+
+      pressed: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.2);
+      },
+
+      released: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.1);
+        var data={};
+        data.Protocol="StartGameRequest";
+        networkManager.send(data);
+      }
+    });
+    startBtn.setText("START");
+
     var readyBtn=new UIButton(Sprite.BROWN, this.roomPanel.body.width/2, 10, 200, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
@@ -31,7 +53,7 @@ class InRoomState extends GameState {
 
       released: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
-        self.setReady(uiButton);
+        self.setReady(!self.isReady);
       }
     });
     readyBtn.setText("READY");
@@ -63,6 +85,12 @@ class InRoomState extends GameState {
     //우측 상단 자신의 자리
     let smallPanel=new UIPanel(Sprite.WHITE,startX, startY, width, height);
 
+    //원래는 투명
+    var readyLabel=new UIButton(Sprite.VOID, width-20, 0, 20, 20, null);
+
+    if(this.isReady)
+      readyLabel.model.setSprite(Sprite.CHECK);
+
     let playerName=new UIButton(Sprite.GRAY, 0, height*(3/4), width, height/4, null);
     playerName.setText(this.userID);
 
@@ -86,8 +114,10 @@ class InRoomState extends GameState {
 
     smallPanel.addComponent(playerName);
     smallPanel.addComponent(btn);
+    smallPanel.addComponent(readyLabel);
     roomPanel.addComponent(smallPanel);
 
+    roomPanel.addComponent(startBtn);
     roomPanel.addComponent(readyBtn);
     roomPanel.addComponent(quitBtn);
 
@@ -109,6 +139,11 @@ class InRoomState extends GameState {
       else ++num;
 
       let smallPanel=new UIPanel(Sprite.WHITE, startX+x*(width+xMargin), startY+y*(height+yMargin), width, height);
+
+      //원래는 투명
+      let readyLabel=new UIButton(Sprite.VOID, width-20, 0, 20, 20, null);
+      if(self.playerList.users[i].isReady)//준비된 상태라면 표시
+        readyLabel.model.setSprite(Sprite.CHECK);
 
       let playerName=new UIButton(Sprite.GRAY, 0, height*(3/4), width, height/4, null);
       playerName.setText(self.playerList.users[i].id);
@@ -133,17 +168,22 @@ class InRoomState extends GameState {
 
       smallPanel.addComponent(playerName);
       smallPanel.addComponent(btn);
+      smallPanel.addComponent(readyLabel);
       roomPanel.addComponent(smallPanel);
 
     }
 
   }
 
-  setReady(uiButton){
-    this.isReady=!this.isReady;
-    if(this.isReady)
-      uiButton.setText("READY true");
-    else uiButton.setText("READY false");
+  setReady(value){
+    this.isReady=value;
+
+    this.reloadFunc(this.roomPanel);
+
+    var data={};
+    data.Protocol="ReadyRoomRequest";
+    data.ReadyStatus=value;
+    networkManager.send(data);
   }
 
   init() {
@@ -192,6 +232,22 @@ class InRoomState extends GameState {
       case "JoinRoomUser":{
         this.playerList.users.push(message.User);
         this.reloadFunc(this.roomPanel);
+      }break;
+
+      case "ReadyRoomUser":{
+        for(let i=0;i<this.playerList.users.length;i++){
+          if(this.playerList.users[i].id==message.UserID){
+            this.playerList.users[i].isReady=message.ReadyStatus;
+            break;
+          }
+        }
+        this.reloadFunc(this.roomPanel);
+      }break;
+
+      case "StartGameReport":{
+        gsm.setState(GameState.MAINGAME_STATE,{
+          Users:this.playerList.users
+        });
       }break;
 
       case "QuitRoomReport":{

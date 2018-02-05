@@ -149,11 +149,14 @@ class LobbyState extends GameState {
     if(msg!=null){
       this.messageProcess(msg);
     }
+
+    if(isKeyPressed(67)){
+      gsm.setState(GameState.CREATE_ROOM_STATE);
+    }
     uiManager.update();
   }
 // 아직 나갈때 처리가 안됬다. 이건 서버에서 처리해야하는 부분
   messageProcess(message) {
-    console.log("ReceiveMessage",message);
     switch (message.Protocol) {
 
       case "GetRoomList":{
@@ -183,6 +186,12 @@ class LobbyState extends GameState {
         }else{
           console.log("방의 인원수가 너무 많습니다.");
         }
+      }break;
+
+      case "StartGameReport":{
+        let roomID=message.RoomID;
+        delete this.roomList[roomID];
+        this.reloadFunc(this.roomListPanel);
       }break;
 
       case "UpdateRoomCurrentUserNum":{

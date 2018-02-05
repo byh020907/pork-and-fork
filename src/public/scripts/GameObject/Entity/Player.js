@@ -1,9 +1,10 @@
 "use strict"
 class Player extends Entity{
-  constructor(x,y){
+  constructor(name,x,y){
     //263*203
     super();
     this.tag="player";
+    this.name=name;
     this.polygon=new Polygon(x,y);
     //body 크기 설정 // 직사각형만 해당
     var width=140;
@@ -23,6 +24,7 @@ class Player extends Entity{
     this.body.owner=this.model.owner=this.collision.owner=this;
 
     this.nose=new PigNose(this,200,0);
+    this.nameTag=new GameText(this,name,0,-100);
 
     this.idleAni=new AnimationModel(this,Sprite.PAF_SHEET,0,17,949/4,143,4,30);
     this.idleAni.loop=true;
@@ -115,11 +117,13 @@ class Player extends Entity{
     this.model.update();
     this.polygon.update();
     this.nose.update();
+    this.nameTag.update();
     this.isMoving=false;
   }
 
   render(pMtrx) {
     this.nose.render(pMtrx);
+    this.nameTag.render(pMtrx);
     super.render(pMtrx);
   }
 
