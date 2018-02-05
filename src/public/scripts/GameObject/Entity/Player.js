@@ -24,9 +24,9 @@ class Player extends Entity{
 
     this.nose=new PigNose(this,200,0);
 
-    this.idleAni=new AnimationModel(this,TextureLoader.get("images/Pig1-Sheet.png"),0,17,949/4,143,4,30);
+    this.idleAni=new AnimationModel(this,Sprite.PAF_SHEET,0,17,949/4,143,4,30);
     this.idleAni.loop=true;
-    this.walkAni=new AnimationModel(this,TextureLoader.get("images/Pig1-Sheet.png"),2868,18,949/4,153,4,6);
+    this.walkAni=new AnimationModel(this,Sprite.PAF_SHEET,2868,18,949/4,153,4,6);
 
     this.walkAni.finishFunction=(function(self){
       return function(){
@@ -37,7 +37,7 @@ class Player extends Entity{
       }
     }(this));
 
-    this.hurtAni=new AnimationModel(this,TextureLoader.get("images/Pig1-Sheet.png"),118,130,79/3,19,3,8);
+    this.hurtAni=new AnimationModel(this,Sprite.PAF_SHEET,118,130,79/3,19,3,8);
     this.hurtAni.finishFunction=(function(self){
       return function(){
         self.model=self.idleAni;
@@ -52,7 +52,8 @@ class Player extends Entity{
     this.jumpCount=0;
     this.maxJumpCount=1;
 
-    this.maxSpeed=5;
+    this.speed=7;
+    // this.maxSpeed=15;
 
     this.isMoving=false;
   }
@@ -97,15 +98,17 @@ class Player extends Entity{
     this.isMoving=true;
     this.model=this.walkAni;
     this.walkAni.play();
-    if(Math.abs(this.body.velocity.x)>this.maxSpeed)
-      return;
+
+    Player.SPEED.set(1,0);
+    Player.SPEED.scaleLocal(this.speed);
     Player.SPEED.rotate(rad);
+
     this.body.applyForce(Player.SPEED);
+
     if(Math.PI/2<rad&&rad<Math.PI*1.5)
       this.setFlip(true);
     else
       this.setFlip(false);
-    Player.SPEED.rotate(-rad);
   }
 
   update(){

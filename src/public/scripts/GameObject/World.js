@@ -28,7 +28,8 @@ class World {
                 //manifold 얻기
                 let contact = new Contact(body, r);
                 contact.solve();
-                if (contact.contactCount >= 1) {
+                //둘다 static 물체이면 NaN오류가 발생한다.
+                if (contact.contactCount >= 1&&(body.inv_mass!==0||r.inv_mass!==0)) {
                     contacts.push(contact);
                     body.owner.hitProcess(r.owner);
                 }

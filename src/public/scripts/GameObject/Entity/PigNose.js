@@ -20,7 +20,7 @@ class PigNose extends Entity{
     ]);
     this.body.owner=this.model.owner=this.collision.owner=this;
 
-    this.model=new AnimationModel(this,TextureLoader.get("images/Pig1-Sheet.png"),956,59,1910/8,60,8,7);
+    this.model=new AnimationModel(this,Sprite.PAF_SHEET,956,59,1910/8,60,8,7);
     this.model.start();
     this.model.loop=true;
   }

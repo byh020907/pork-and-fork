@@ -32,8 +32,8 @@ function Display(width,height){
   this.textCanvas.style.border="3px solid red";
   this.textCanvas.width=width;
   this.textCanvas.height=height;
-  //html body에 삽입
-  document.body.appendChild(this.textCanvas);
+  //html body에 삽입x
+  // document.body.appendChild(this.textCanvas);
   this.textCtx=this.textCanvas.getContext("2d");
 
   this.projectionMatrix=mat4.create();
@@ -45,7 +45,7 @@ function Display(width,height){
 
   function initGL(canvas) {
       try {
-          gl = canvas.getContext("experimental-webgl");
+          gl = canvas.getContext("webgl");
           gl.viewportWidth = canvas.width;
           gl.viewportHeight = canvas.height;
       } catch (e) {
@@ -159,52 +159,50 @@ function createTexture(texture,image) {
 
     var a=arguments;
 
-    function handleLoadedTexture(texture) {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        //어차피 mat4.ortho(left,right,bottom,top,near,far)를 통해 뒤집어지므로 아래 메서드는 생략한다.(일반적인 3d 좌표에서는 아래 메서드를 써야 uv좌표가 알맞게 나온다.)
-        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL , true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-    }
-
     switch (a.length) {
       case 2:{
-        texture.image = image;
-        handleLoadedTexture(texture);
-      }break;
-
-      //text,font
-      case 3:{
-        var txtImg=display.textCanvas;
-        var ctx=txtImg.getContext("2d");
-
-        // ctx.save();
-
-        var text=a[1];//    "www.jrr.kr";
-        ctx.font=a[2];//    "bold 20px Arial";
-
-        txtImg.width  = 100;
-        txtImg.height = 50;
-        ctx.font = a[2];
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.fillText(text, txtImg.width / 2, txtImg.height / 2);
-
-        // ctx.restore();
-
-        texture.image = txtImg;
-        texture.image.onload = function () {
-            handleLoadedTexture(texture);
+        if(a[1] instanceof Text){
+          let text=a[1];
+          display.textCtx.save();
+          display.textCanvas.width=getPowerOfTwo(display.textCtx.measureText(text.value).width);
+          display.textCanvas.height=getPowerOfTwo(text.size*1.2);
+          display.textCtx.font=text.size+"px "+text.font;
+          display.textCtx.fillStyle=text.color;
+          display.textCtx.textAlign="left";
+          display.textCtx.textBaseline = "top";
+          display.textCtx.fillText(text.value,0,0);
+          texture.image = display.textCanvas;
+          texture.textWidth=display.textCtx.measureText(text.value).width;
+          texture.textHeight=text.size*1.2;//글자 잘리는거 방지
+          display.textCtx.restore();
+          handleLoadedTexture(texture);
+        }else if(typeof a[1] ==	"object"){
+          texture.image = image;
+          handleLoadedTexture(texture);
         }
-        texture.image.src = txtImg.toDataURL("image/png");
+
       }break;
 
       default:OverloadingException();
 
     }
+}
+
+function getPowerOfTwo(value) {
+	var pow = 1;
+	while(pow<value) {
+		pow *= 2;
+	}
+	return pow;
+}
+
+function handleLoadedTexture(texture){
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  //어차피 mat4.ortho(left,right,bottom,top,near,far)를 통해 뒤집어지므로 아래 메서드는 생략한다.(일반적인 3d 좌표에서는 아래 메서드를 써야 uv좌표가 알맞게 나온다.)
+  // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL , true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.bindTexture(gl.TEXTURE_2D, null);
 }

@@ -96,7 +96,7 @@ class UIComponent extends GameObject{
 
   init(uiPanel){
     this.panel=uiPanel;
-    this.collision.setPos(this.panel.collision.pos.x+this.getX(),this.panel.collision.pos.y+this.getY());
+    this.collision.setPos(this.getX()+uiPanel.getWorldX(),this.getY()+uiPanel.getWorldY());
   }
 
   //Body의 pos는 실제 모델좌표의 중심, 실제 사용할때는 아래 메서드 사용하여 왼쪽상단의 좌표를 리턴해준다//UI는 무조건 왼쪽상단이 기준
@@ -110,7 +110,14 @@ class UIComponent extends GameObject{
 
   getWorldX(){
     var sum=0;
-    for(let component=this;component.panel!=null;component=component.panel){
+
+    //for문 동작순서는
+    //1. let component=this;        //초기화(처음 한번만)
+    //2. component!=null;           //조건
+    //3. sum+=component.getX();     //실행 블록
+    //4. component=component.panel  //증감자
+
+    for(let component=this;component!=null;component=component.panel){
       sum+=component.getX();
     }
 
@@ -119,7 +126,7 @@ class UIComponent extends GameObject{
 
   getWorldY(){
     var sum=0;
-    for(let component=this;component.panel!=null;component=component.panel){
+    for(let component=this;component!=null;component=component.panel){
       sum+=component.getY();
     }
 
@@ -166,8 +173,29 @@ class UIPanel extends UIComponent{
     this.components.push(component);
   }
 
+  init(uiPanel){
+    this.panel=uiPanel;
+    this.collision.setPos(this.getX()+uiPanel.getWorldX(),this.getY()+uiPanel.getWorldY());
+    for(let component of this.components){
+      component.init(this);
+    }
+  }
+
   clear(){
-    this.components=[];
+    this.f(this);
+  }
+
+  //component는 components를 가진 판넬을 최초인자로 가진다
+  f(panel){
+    if(panel instanceof UIPanel){
+      for(var c of panel.components){
+        this.f(c);
+      }
+      panel.components=[];//초기화
+    }else{
+      //만약 UIPanel이 아니면
+      //아무것도 안함
+    }
   }
 
   //루트 판넬일때만
@@ -178,8 +206,8 @@ class UIPanel extends UIComponent{
         if(this.hasTexture)//offset을 0으로 설정
           super.render(display,0,0);
 
-        for(var i in this.components){
-          this.components[i].render(display,this.getX(),this.getY());
+        for(let component of this.components){
+          component.render(display,this.getX(),this.getY());
         }
       }break;
 
@@ -187,8 +215,8 @@ class UIPanel extends UIComponent{
         if(this.hasTexture)
           super.render(display,xOffset,yOffset);
 
-        for(var i in this.components){
-          this.components[i].render(display,xOffset+this.getX(),yOffset+this.getY());
+        for(let component of this.components){
+          component.render(display,xOffset+this.getX(),yOffset+this.getY());
         }
       }break;
 
@@ -200,8 +228,8 @@ class UIPanel extends UIComponent{
 
   update(){
     super.update();
-    for(var i in this.components){
-      this.components[i].update();
+    for(var component of this.components){
+        component.update();
     }
   }
 

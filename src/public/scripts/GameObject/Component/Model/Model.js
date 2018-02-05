@@ -8,6 +8,10 @@ class Model extends Component{
 
   }
 
+  setFlip(isFlipped){
+    this.isFlipped=isFlipped;
+  }
+
   render(pMtrx,body) {}
 
 }

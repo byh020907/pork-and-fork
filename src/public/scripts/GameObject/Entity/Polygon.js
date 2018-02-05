@@ -31,11 +31,11 @@ function Polygon(x,y){
   this.body=new Body(this,vertices);
   this.body.pos.x=x;
   this.body.pos.y=y;
-  //width,height는 폴리곤에서는 기본적으로 1로설정한다.(안해도 됨)//쿼드트리에서 차지 영역 계산할때 사용
+  //width,height는 폴리곤에서는 기본적으로 1로설정한다.(안해도 됨)//원래는 텍스쳐렌더링시 사용하는 값
   this.body.width=1;
   this.body.height=1;
 
-  this.density=0.1;
+  this.density=0.001;
   //무게및 관성력 계산
   this.computeMass(this.body,this.density);
 
@@ -84,9 +84,6 @@ Polygon.prototype.computeMass=function(body,density){
   body.inv_mass = (body.mass) ? 1.0 / body.mass : 0.0;
   body.inertia = I * density;
   body.inv_inertia = body.inertia ? 1.0 / body.inertia : 0.0;
-
-  body.inertia=12000;
-  body.inv_inertia=1/12000;
 }
 
 Polygon.prototype.setVertices = function (vertices) {
@@ -102,7 +99,7 @@ Polygon.prototype.setVertices = function (vertices) {
     verticesData.push(this.model.vertices[i].y);
     verticesData.push(0);
   }
-  this.model.renderAble.setVertices(verticesData);
+  this.model.shape.setVertices(verticesData);
 
   var indicesData=[];
   for(let i=0;i<this.model.vertices.length-2;i++){
@@ -110,7 +107,9 @@ Polygon.prototype.setVertices = function (vertices) {
     indicesData.push(i+1);
     indicesData.push(i+2);
   }
-  this.model.renderAble.setIndices(indicesData);
+  this.model.shape.setIndices(indicesData);
+
+  this.computeMass(this.body,this.density);
 };
 
 Polygon.prototype.setRegularPolygon = function (verticesNum,radius) {
@@ -121,7 +120,6 @@ Polygon.prototype.setRegularPolygon = function (verticesNum,radius) {
 
   this.setVertices(vertices);
 
-  //원래는 1에 해당하는 자리에 변수가 들어가야함 [density]
   this.computeMass(this.body,this.density);
 };
 
@@ -131,7 +129,7 @@ Polygon.prototype.setStatic = function () {
 };
 
 Polygon.prototype.setColor = function (r,g,b,a) {
-  this.model.renderAble.setColor(r,g,b,a);
+  this.model.shape.setColor(r,g,b,a);
 };
 
 Polygon.prototype.update=function(){
