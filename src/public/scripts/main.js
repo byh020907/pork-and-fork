@@ -33,7 +33,7 @@ function init(){
 
   uiManager=new UIManager();
   gsm=new GameStateManager();
-  networkManager=new NetworkManager("ws://localhost:9080/pork_and_fork_server/websocket");
+  networkManager=new NetworkManager("wss://pnf.herokuapp.com/socket");
 
   gameLoop();
 }
