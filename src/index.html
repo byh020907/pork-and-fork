@@ -75,7 +75,7 @@
 <script src="scripts/Display.js" charset="utf-8"></script>
 <!-- (WebGLContext)gl가 먼저 로딩 되어야하므로 Display만 먼저 따로 로딩한다. -->
 <script>
-  var display=new Display(1700,800);
+  var display=new Display(window.innerWidth,window.innerHeight);
   // console.log(window.innerWidth,window.innerHeight);
 
   window.addEventListener("load",function(){
@@ -88,6 +88,9 @@
 <script src="scripts/Graphic/Texture.js" charset="utf-8"></script>
 <script src="scripts/Graphic/Sprite.js" charset="utf-8"></script>
 <script src="scripts/Graphic/Text.js" charset="utf-8"></script>
+
+<script src="scripts/Algorithm/QuadTree.js" charset="utf-8"></script>
+<script src="scripts/Algorithm/Rectangle.js" charset="utf-8"></script>
 
 <script src="scripts/TextureLoader.js" charset="utf-8"></script>
 <script src="scripts/NetworkManager.js" charset="utf-8"></script>
@@ -125,9 +128,7 @@
 <script src="scripts/GameObject/Entity/DoubleBall.js" charset="utf-8"></script>
 <script src="scripts/GameObject/Entity/DoubleRect.js" charset="utf-8"></script>
 <script src="scripts/GameObject/Entity/GameText.js" charset="utf-8"></script>
-
-<script src="scripts/Algorithm/QuadTree.js" charset="utf-8"></script>
-<script src="scripts/Algorithm/Rectangle.js" charset="utf-8"></script>
+<script src="scripts/GameObject/Entity/Particle.js" charset="utf-8"></script>
 
 <script src="scripts/GameObject/Component/Body/UIBody.js" charset="utf-8"></script>
 <script src="scripts/UI/UIManager.js" charset="utf-8"></script>

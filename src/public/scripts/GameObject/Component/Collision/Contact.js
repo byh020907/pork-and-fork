@@ -1,11 +1,10 @@
 "use strict"
 
-class Contact {
+class Contact extends PoolObject{
     constructor(A, B) {
+        super();
         //A와 B는 body
-        this.A = A;
-        this.B = B;
-        this.penetration = 0;
+        this.penetration = Number.MAX_VALUE;
         this.normal = new Vector2d();
         //회전 적용할때 쓰는 변수
         this.contacts = [new Vector2d(), new Vector2d()];
@@ -14,6 +13,27 @@ class Contact {
         this.e;
         this.sf;
         this.df;
+    }
+
+    init(A,B){
+      if(A==undefined)
+        return;
+      this.A = A;
+      this.B = B;
+    }
+
+    destructor(){
+      this.A=this.B=null;
+
+      this.penetration = Number.MAX_VALUE;
+      this.normal.set(0,0);
+      //회전 적용할때 쓰는 변수
+      this.contacts[0].set(0,0);this.contacts[1].set(0,0);
+      this.contactCount = 0;
+
+      this.e=null;
+      this.sf=null;
+      this.df=null;
     }
 
     solve() {
@@ -146,3 +166,5 @@ class Contact {
     }
 
 }
+
+Contact.ObjectPool=new ObjectPool(Contact,10);

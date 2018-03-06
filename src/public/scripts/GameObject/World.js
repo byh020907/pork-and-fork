@@ -5,7 +5,7 @@ class World {
     constructor(bound) {
         this.rootQuad = new QuadTree(0, bound);
         this.bodyList = [];
-        this.iterations = 15;
+        this.iterations = 1;
     }
 
     update() {
@@ -26,12 +26,15 @@ class World {
                 if (body == r)
                     continue;
                 //manifold 얻기
-                let contact = new Contact(body, r);
+                let contact = Contact.ObjectPool.alloc();
+                contact.init(body,r);
                 contact.solve();
                 //둘다 static 물체이면 NaN오류가 발생한다.
                 if (contact.contactCount >= 1&&(body.inv_mass!==0||r.inv_mass!==0)) {
                     contacts.push(contact);
                     body.owner.hitProcess(r.owner);
+                }else{
+                    Contact.ObjectPool.free(contact);
                 }
             }
 
@@ -62,6 +65,12 @@ class World {
             body.force.set(0, 0);
             body.torque = 0;
         }
+
+        //free
+        for (let i=0;i<contacts.length;++i) {
+            Contact.ObjectPool.free(contacts[i]);
+        }
+        // console.log(contacts.length);
     }
 
     //0.5만큼만 진행

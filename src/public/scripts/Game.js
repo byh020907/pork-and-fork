@@ -1,12 +1,15 @@
 "use strict"
 
 class Game{
-  constructor(){
+  constructor(mgs){
+    this.mainGameState=gsm.list[GameState.MAINGAME_STATE];
     this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
     this.player;
     this.players=[];
     this.world=new World(new Rectangle(-1500,-1500,3000,3000));
     this.timer=0;
+
+    this.particles=[];
   }
 
   init(users){
@@ -57,6 +60,16 @@ class Game{
     // this.world.addBody(c.body);
   }
 
+  //MainGameState 클래스와의 연결 메서드
+  doAction(func,arg){
+    if(arg==undefined){
+      Reflect.apply(func,this,[]);
+      return;
+    }
+
+    Reflect.apply(func,this,arg);
+  }
+
   reset(){
     Entity.clear();
     this.world=null;
@@ -92,6 +105,9 @@ class Game{
       //   let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);
       //   p.body.applyForce(v);
       //   this.world.addBody(p.body);
+      // }
+      // for(let i=0;i<50;i++){
+      //   Particle.ObjectPool.alloc(Math.random()*100,Math.random()*100);
       // }
 
       for(let i=0;i<1;i++){

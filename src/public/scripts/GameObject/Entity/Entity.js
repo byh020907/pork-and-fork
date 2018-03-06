@@ -1,28 +1,31 @@
 "use strict"
 
-function Entity(){
-  GameObject.apply(this,[]);
-  this.id=Math.random();
-  Entity.list[this.id]=this;
-}
+class Entity extends GameObject{
 
-inherit(GameObject,Entity);
+  constructor(){
+    super();
+    this.id=Math.random();
+    Entity.list[this.id]=this;
+  }
+
+  update(){
+
+  }
+
+  remove(){
+    delete Entity.list[this.id];
+  }
+
+  hitProcess(e){
+
+  }
+
+}
 
 Entity.list={};
 
-Entity.prototype.update=function(){
-}
-
 Entity.clear=function(){
   Entity.list={};
-}
-
-Entity.prototype.remove=function(){
-  delete Entity.list[this.id];
-}
-
-Entity.prototype.hitProcess=function(e){
-
 }
 
 Entity.renderAll=function(camera){

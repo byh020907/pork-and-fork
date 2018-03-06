@@ -1,8 +1,13 @@
 "use strict"
-
-class Vector2d{
+var asd=0;
+class Vector2d extends PoolObject{
 
   constructor(x,y){
+    super();
+    this.init(x,y);
+  }
+
+  init(x,y){
     var a=arguments;
 
     switch (a.length) {
@@ -13,11 +18,16 @@ class Vector2d{
       }break;
 
       case 1:{
+        //x가 널이면 뒤를 실행한다.
+        x=x||{x:0,y:0};
         this.x=x.x;
         this.y=x.y;
       }break;
 
       case 2:{
+        //x,y가 널이면 뒤를 실행한다.
+        x=x||0;
+        y=y||0;
         this.x=x;
         this.y=y;
       }break;
@@ -25,6 +35,12 @@ class Vector2d{
       default:OverloadingException();
 
     }
+  }
+
+  //객체값 초기화
+  destructor(){
+    this.x=0;
+    this.y=0;
   }
 
   set(x,y) {
@@ -140,6 +156,8 @@ class Vector2d{
 Vector2d.cross=function(s,v){
   return new Vector2d(-s * v.y, s * v.x);
 }
+
+Vector2d.ObjectPool=new ObjectPool(Vector2d,0);
 
 function Mat2d(){
   var a=arguments;

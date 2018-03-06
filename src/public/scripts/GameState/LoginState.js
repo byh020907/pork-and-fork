@@ -38,7 +38,6 @@ class LoginState extends GameState {
         uiButton.label.setColor(0,0,0,0.1);
       },
       exited: function(uiButton) {
-        uiButton.isFocus=false;
         uiButton.label.setColor(0,0,0,0.0);
       },
       pressed: function(uiButton) {
@@ -54,7 +53,6 @@ class LoginState extends GameState {
         uiButton.label.setColor(0,0,0,0.1);
       },
       exited: function(uiButton) {
-        uiButton.isFocus=false;
         uiButton.label.setColor(0,0,0,0.0);
       },
       pressed: function(uiButton) {
@@ -70,7 +68,6 @@ class LoginState extends GameState {
         uiButton.label.setColor(0,0,0,0.1);
       },
       exited: function(uiButton) {
-        uiButton.isFocus=false;
         uiButton.label.setColor(0,0,0,0.0);
       },
       pressed: function(uiButton) {

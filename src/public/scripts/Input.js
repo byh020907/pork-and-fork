@@ -58,6 +58,8 @@ function mouseDown(e) {
             break;
     }
     currentMouses[e.which] = true;
+
+    uiManager.mouseDown(e);
 }
 
 function mouseUp(e) {

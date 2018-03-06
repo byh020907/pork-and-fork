@@ -19,7 +19,6 @@ function Display(width,height){
   this.canvas.style.position="absolute";
   this.canvas.style.left="0px";
   this.canvas.style.top="0px";
-  this.canvas.style.border="3px solid red";
   this.canvas.width=width;
   this.canvas.height=height;
   //html body에 삽입

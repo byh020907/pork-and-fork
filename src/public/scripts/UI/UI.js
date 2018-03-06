@@ -17,6 +17,16 @@ class UIButton extends UIComponent {
     this.textLabel.setText(value);
   }
 
+  setBound(sx,sy,fx,fy){
+    super.setBound(sx,sy,fx,fy);
+
+    this.label.resetBound(this);
+    this.textLabel.resetBound(this);
+    //기본 버튼 텍스트 크기설정
+    this.textLabel.body.width/=2;
+    this.textLabel.body.height/=2;
+  }
+
   //현재 자신이속한 판넬에서 해당좌표(절대좌표)에 가장 위에있는 component의 id를 리턴하는 함수
   checkDepthHighest(mousePos) {
     for (let i = this.panel.components.length - 1; i >= 0; i--) {
@@ -124,6 +134,13 @@ class UILabel extends GameObject {
     this.model.setColor(0, 0, 0, 0.0);
   }
 
+  resetBound(owner){
+    this.body.pos.x = owner.body.pos.x;
+    this.body.pos.y = owner.body.pos.y;
+    this.body.width = owner.body.width;
+    this.body.height = owner.body.height;
+  }
+
   setColor() {
     this.model.setColor.apply(this.model, arguments);
   }
@@ -146,6 +163,13 @@ class UITextLabel extends GameObject {
     this.body.height = owner.body.height;
     this.model = new TextureModel(this, Sprite.TEXT);
     this.text = "";
+  }
+
+  resetBound(owner){
+    this.body.pos.x = owner.body.pos.x;
+    this.body.pos.y = owner.body.pos.y;
+    this.body.width = owner.body.width;
+    this.body.height = owner.body.height;
   }
 
   setText(value) {
