@@ -7,58 +7,51 @@ function PolygonCollision(owner, body) {
 
 inherit(Collision, PolygonCollision);
 
-PolygonCollision.prototype.hitTest = function(collision) {
-    if (collision instanceof PolygonCollision)
-        return PolygonvsPolygon(this.owner.body, collision.owner.body);
-    if (collision instanceof CircleCollision)
-        return CirclevsPolygon(collision.owner.body, this.owner.body);
-}
-
 // 축에 대한 다각형의 정사영을 계산하고 [min, max] 간격을 반환한다.
-function ProjectPolygon(axis, polygon) {
-    // 점을 축에 정사영하기 위해 내적을 쓴다
-
-    var dotProduct = axis.dot(polygon.pos.add(polygon.u.mul(polygon.vertices[0])));
-    var min = dotProduct;
-    var max = dotProduct;
-    for (let i = 0; i < polygon.vertices.length; i++) {
-        dotProduct = axis.dot(polygon.pos.add(polygon.u.mul(polygon.vertices[i])));
-        if (dotProduct < min) {
-            min = dotProduct;
-        } else if (dotProduct > max) {
-            max = dotProduct;
-        }
-    }
-
-    return {
-        min: min,
-        max: max
-    };
-}
-
-// 축에 대한 다각형의 정사영을 계산하고 [min, max] 간격을 반환한다.
-function ProjectCircle(axis, circle) {
-    // 점을 축에 정사영하기 위해 내적을 쓴다
-
-    var dotProduct = axis.dot(circle.pos);
-    var min = dotProduct - circle.radius;
-    var max = dotProduct + circle.radius;
-
-    return {
-        min: min,
-        max: max
-    };
-}
-
-// [minA, maxA]와 [minB, maxB] 사이의 거리를 계산한다
-// 구간이 겹치면 거리는 음수다
-function IntervalDistance(minA, maxA, minB, maxB) {
-    if (minA < minB) {
-        return minB - maxA;
-    } else {
-        return minA - maxB;
-    }
-}
+// function ProjectPolygon(axis, polygon) {
+//     // 점을 축에 정사영하기 위해 내적을 쓴다
+//
+//     var dotProduct = axis.dot(polygon.pos.add(polygon.u.mul(polygon.vertices[0])));
+//     var min = dotProduct;
+//     var max = dotProduct;
+//     for (let i = 0; i < polygon.vertices.length; i++) {
+//         dotProduct = axis.dot(polygon.pos.add(polygon.u.mul(polygon.vertices[i])));
+//         if (dotProduct < min) {
+//             min = dotProduct;
+//         } else if (dotProduct > max) {
+//             max = dotProduct;
+//         }
+//     }
+//
+//     return {
+//         min: min,
+//         max: max
+//     };
+// }
+//
+// // 축에 대한 다각형의 정사영을 계산하고 [min, max] 간격을 반환한다.
+// function ProjectCircle(axis, circle) {
+//     // 점을 축에 정사영하기 위해 내적을 쓴다
+//
+//     var dotProduct = axis.dot(circle.pos);
+//     var min = dotProduct - circle.radius;
+//     var max = dotProduct + circle.radius;
+//
+//     return {
+//         min: min,
+//         max: max
+//     };
+// }
+//
+// // [minA, maxA]와 [minB, maxB] 사이의 거리를 계산한다
+// // 구간이 겹치면 거리는 음수다
+// function IntervalDistance(minA, maxA, minB, maxB) {
+//     if (minA < minB) {
+//         return minB - maxA;
+//     } else {
+//         return minA - maxB;
+//     }
+// }
 
 //구버전(ContactPoint 고려x)
 // function PolygonvsPolygon(m, A, B) {
@@ -137,18 +130,24 @@ function findAxisLeastPenetration(faceIndex, A, B) {
         // Retrieve a face normal from A
         // Vec2 n = A->m_normals[i];
         // Vec2 nw = A->u * n;
-        var n=A.getNormal(i);
-        var nw = A.u.mul(n);
+        var n = Vector2d.ObjectPool.alloc();
+        n.init(A.getNormal(i));
+        var nw = Vector2d.ObjectPool.alloc();
+        nw.init(A.u.mul(n));
 
         // Transform face normal into B's model space
         // Mat2 buT = B->u.Transpose( );
         // n = buT * nw;
         var buT = B.u.transpose();
-        n = buT.mul(nw);
+        n.set(buT.mul(nw));
 
         // Retrieve support point from B along -n
         // Vec2 s = B->GetSupport( -n );
-        var s = B.getSupport(n.scale(-1));
+        var _n = Vector2d.ObjectPool.alloc();
+        _n.init(n);
+        _n.scaleLocal(-1);
+        var s = Vector2d.ObjectPool.alloc();
+        s.init(B.getSupport(_n));
 
         // Retrieve vertex on face from A, transform into
         // B's model space
@@ -156,20 +155,29 @@ function findAxisLeastPenetration(faceIndex, A, B) {
         // v = A->u * v + A->body->position;
         // v -= B->body->position;
         // v = buT * v;
-        var v = A.vertices[i];
-        v=A.u.mul(v).add(A.pos);
+        var v = Vector2d.ObjectPool.alloc();
+        v.init(A.vertices[i]);
+        v.set(A.u.mul(v));
+        v.addLocal(A.pos);
         v.subLocal(B.pos);
-        v=buT.mul(v);
+        v.set(buT.mul(v));
 
         // Compute penetration distance (in B's model space)
         // real d = Dot( n, s - v );
-        let d = n.dot(s.sub(v));
+        s.subLocal(v);
+        let d = n.dot(s);
 
         // Store greatest distance
         if (d > bestDistance) {
             bestDistance = d;
             bestIndex = i;
         }
+
+        Vector2d.ObjectPool.free(n);
+        Vector2d.ObjectPool.free(nw);
+        Vector2d.ObjectPool.free(_n);
+        Vector2d.ObjectPool.free(s);
+        Vector2d.ObjectPool.free(v);
     }
 
     faceIndex[0] = bestIndex;
@@ -177,14 +185,15 @@ function findAxisLeastPenetration(faceIndex, A, B) {
 }
 
 function findIncidentFace(v, RefPoly, IncPoly, referenceIndex) {
-    var referenceNormal = RefPoly.getNormal(referenceIndex);
+  var referenceNormal = Vector2d.ObjectPool.alloc();
+  referenceNormal.init(RefPoly.getNormal(referenceIndex));
 
     // Calculate normal in incident's frame of reference
     // referenceNormal = RefPoly->u * referenceNormal; // To world space
     // referenceNormal = IncPoly->u.Transpose( ) * referenceNormal; // To
     // incident's model space
-    referenceNormal = RefPoly.u.mul(referenceNormal); // To world space
-    referenceNormal = IncPoly.u.transpose().mul(referenceNormal); // To incident's model space
+    referenceNormal.set(RefPoly.u.mul(referenceNormal)); // To world space
+    referenceNormal.set(IncPoly.u.transpose().mul(referenceNormal)); // To incident's model space
 
     // Find most anti-normal face on incident polygon
     var incidentFace = 0;
@@ -207,9 +216,13 @@ function findIncidentFace(v, RefPoly, IncPoly, referenceIndex) {
     // v[1] = IncPoly->u * IncPoly->m_vertices[incidentFace] +
     // IncPoly->body->position;
 
-    v[0] = IncPoly.u.mul(IncPoly.vertices[incidentFace]).add(IncPoly.pos);
+    v[0].set(IncPoly.u.mul(IncPoly.vertices[incidentFace]));
+    v[0].addLocal(IncPoly.pos);
     incidentFace = (incidentFace + 1 == IncPoly.vertices.length) ? 0 : incidentFace + 1;
-    v[1] = IncPoly.u.mul(IncPoly.vertices[incidentFace]).add(IncPoly.pos);
+    v[1].set(IncPoly.u.mul(IncPoly.vertices[incidentFace]));
+    v[1].addLocal(IncPoly.pos);
+
+    Vector2d.ObjectPool.free(referenceNormal);
 }
 
 function clip(n, c, face) {
@@ -256,11 +269,6 @@ function clip(n, c, face) {
 
 function PolygonvsPolygon(m,A, B) {
 
-    var contacts = [new Vector2d(),new Vector2d()]; //길이는 최대 2
-    var contactCount = 0;
-    var normal;
-    var penetration = Number.MAX_VALUE;
-
     // Check for a separating axis with A's face planes
     var faceA = [0];
     var penetrationA = findAxisLeastPenetration(faceA, A, B);
@@ -294,8 +302,6 @@ function PolygonvsPolygon(m,A, B) {
         flip = true;
     }
 
-    //여기 까진 문제 없어 보임(console.log()로 찍어보았다)
-
     // World space incident face
     var incidentFace = [new Vector2d(0,0),new Vector2d(0,0)];
 
@@ -315,15 +321,19 @@ function PolygonvsPolygon(m,A, B) {
 
 
     // Setup reference face vertices
-    var v1 = RefPoly.vertices[referenceIndex];
+    var v1 = Vector2d.ObjectPool.alloc();
+    v1.init(RefPoly.vertices[referenceIndex]);
     referenceIndex = (referenceIndex + 1 == RefPoly.vertices.length) ? 0 : referenceIndex + 1;
-    var v2 = RefPoly.vertices[referenceIndex];
+    var v2 = Vector2d.ObjectPool.alloc();
+    v2.init(RefPoly.vertices[referenceIndex]);
 
     // Transform vertices to world space
     // v1 = RefPoly->u * v1 + RefPoly->body->position;
     // v2 = RefPoly->u * v2 + RefPoly->body->position;
-    v1 = RefPoly.u.mul(v1).add(RefPoly.pos);
-    v2 = RefPoly.u.mul(v2).add(RefPoly.pos);
+    v1.set(RefPoly.u.mul(v1));
+    v1.addLocal(RefPoly.pos);
+    v2.set(RefPoly.u.mul(v2));
+    v2.addLocal(RefPoly.pos);
 
     // Calculate reference face side normal in world space
     // Vec2 sidePlaneNormal = (v2 - v1);
@@ -333,7 +343,8 @@ function PolygonvsPolygon(m,A, B) {
 
     // Orthogonalize
     // Vec2 refFaceNormal( sidePlaneNormal.y, -sidePlaneNormal.x );
-    var refFaceNormal = new Vector2d(sidePlaneNormal.y, -sidePlaneNormal.x);
+    var refFaceNormal = Vector2d.ObjectPool.alloc();
+    refFaceNormal.init(sidePlaneNormal.y, -sidePlaneNormal.x);
 
     // ax + by = c
     // c is distance from origin
@@ -343,6 +354,9 @@ function PolygonvsPolygon(m,A, B) {
     var refC = refFaceNormal.dot(v1);
     var negSide = -sidePlaneNormal.dot(v1);
     var posSide = sidePlaneNormal.dot(v2);
+
+    Vector2d.ObjectPool.free(v1);
+    Vector2d.ObjectPool.free(v2);
 
     // Clip incident face to reference face side planes
     // if(Clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
@@ -358,40 +372,37 @@ function PolygonvsPolygon(m,A, B) {
     }
 
     // Flip
-    normal=refFaceNormal.clone();
+    m.normal.set(refFaceNormal);
     if (flip) {
-        normal=normal.scale(-1);
+        m.normal.scaleLocal(-1);
     }
 
     // Keep points behind reference face
     var cp = 0; // clipped points behind reference face
     var separation = refFaceNormal.dot(incidentFace[0]) - refC;
     if (separation <= 0.0) {
-        contacts[cp]=incidentFace[0];
-        penetration = -separation;
+        m.contacts[cp].set(incidentFace[0]);
+        m.penetration = -separation;
         ++cp;
     } else {
-        penetration = 0;
+        m.penetration = 0;
     }
 
     separation = refFaceNormal.dot(incidentFace[1]) - refC;
 
     if (separation <= 0.0) {
-        contacts[cp]=incidentFace[1];
+        m.contacts[cp].set(incidentFace[1]);
 
-        penetration += -separation;
+        m.penetration += -separation;
         ++cp;
 
         // Average penetration
-        penetration /= cp;
+        m.penetration /= cp;
     }
 
-    contactCount = cp;
+    m.contactCount=cp;
 
-    m.normal=normal;
-    m.penetration=penetration;
-    m.contacts=contacts;
-    m.contactCount=contactCount;
+    Vector2d.ObjectPool.free(refFaceNormal);
 
     return true;
 }
@@ -400,7 +411,13 @@ function CirclevsPolygon(m, A, B) {
 
     // Transform circle center to Polygon model space
     //A의 중심이 B의 모델좌표안에서 회전이 0도일때 의 값이다.
-    var center = B.u.transpose().mul(A.pos.sub(B.pos));
+
+    var temp=Vector2d.ObjectPool.alloc();
+    temp.init(A.pos);//temp.set()과 동일
+    temp.subLocal(B.pos);
+    var center = B.u.transpose().mul(temp);
+    Vector2d.ObjectPool.free(temp);temp=null;
+    // var center = B.u.transpose().mul(A.pos.sub(B.pos));
 
     var separation = -Number.MAX_VALUE;
     var faceNormalIndex = -1;
@@ -408,8 +425,13 @@ function CirclevsPolygon(m, A, B) {
     // 두 다각형의 모든 변에 대해 루프
     for (let i = 0; i < B.vertices.length; i++) {
         // get the current vertex
-        let s = B.getNormal(i).dot( center.sub( B.vertices[i] ) );
-        
+        temp=Vector2d.ObjectPool.alloc();
+        temp.init(center);
+        temp.subLocal(B.vertices[i]);
+        let s = B.getNormal(i).dot( temp );
+        Vector2d.ObjectPool.free(temp);temp=null;
+        // let s = B.getNormal(i).dot( center.sub( B.vertices[i] ) );
+
         if (s > A.radius)
             return;
 
@@ -425,14 +447,43 @@ function CirclevsPolygon(m, A, B) {
     // Check to see if center is within polygon
     if (separation < 0.0001) {
         m.contactCount=1;
-        m.normal.set(B.u.mul(B.getNormal(faceNormalIndex)).scale(-1));
-        m.contacts[0].set(m.normal.scale(A.radius).add(A.pos));
+
+        temp=Vector2d.ObjectPool.alloc();
+        temp.init(B.getNormal(faceNormalIndex));
+        temp.scaleLocal(-1);
+        m.normal.set(B.u.mul(temp));
+        // m.normal.set(B.u.mul(B.getNormal(faceNormalIndex)).scale(-1));
+
+        temp.set(m.normal);
+        temp.scaleLocal(A.radius);
+        temp.addLocal(A.pos);
+        m.contacts[0].set(temp);
+        // m.contacts[0].set(m.normal.scale(A.radius).add(A.pos));
+
+        Vector2d.ObjectPool.free(temp);temp=null;
+
         m.penetration = A.radius;
         return;
     }
 
-    var dot1 = center.sub(v1).dot(v2.sub(v1));
-    var dot2 = center.sub(v2).dot(v1.sub(v2));
+    temp=Vector2d.ObjectPool.alloc();
+    var temp1=Vector2d.ObjectPool.alloc();
+    temp.init(center);
+    temp.subLocal(v1);
+    temp1.init(v2);
+    temp1.subLocal(v1);
+    var dot1 = temp.dot(temp1);
+    // var dot1 = center.sub(v1).dot(v2.sub(v1));
+
+    temp.set(center);
+    temp.subLocal(v2);
+    temp1.set(v1);
+    temp1.subLocal(v2);
+    var dot2 = temp.dot(temp1);
+    // var dot2 = center.sub(v2).dot(v1.sub(v2));
+
+    Vector2d.ObjectPool.free(temp);
+    Vector2d.ObjectPool.free(temp1);
 
     m.penetration = A.radius - separation;
 
@@ -470,17 +521,22 @@ function CirclevsPolygon(m, A, B) {
         if (center.sub(v1).dot(n) > A.radius)
             return;
         m.contactCount=1;
-        n=B.u.mul(n);
-        m.normal=n.scale(-1);
-        m.contacts[0].set(m.normal.scale(A.radius).add(A.pos));
+        n.set(B.u.mul(n));
+        n.scaleLocal(-1);
+        m.normal.set(n);
+        temp=Vector2d.ObjectPool.alloc();
+        temp.init(m.normal);
+        temp.scaleLocal(A.radius);
+        temp.addLocal(A.pos)
+        m.contacts[0].set(temp);
+        Vector2d.ObjectPool.free(temp);
     }
-    // console.log(m.contacts[0]);
 }
 
 function PolygonvsCircle(m,A, B) {
   CirclevsPolygon(m,B, A);
   if(m.contactCount>0)
-    m.normal.set(m.normal.scale(-1));
+    m.normal.scaleLocal(-1);
 }
 
 Collision.dispatch=[

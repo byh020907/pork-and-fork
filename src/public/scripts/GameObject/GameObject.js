@@ -1,20 +1,24 @@
 "use strict"
 
-function GameObject(){
+class GameObject{
+
+  constructor(){
     this.body;
     this.model;
     this.collision;
-}
+  }
 
-GameObject.prototype.render=function(pMtrx) {
-  if(this.model!=null)
-  this.model.render(pMtrx,this.body);
-}
+  render(pMtrx) {
+    if(this.model!=null)
+    this.model.render(pMtrx,this.body);
+  }
 
-GameObject.prototype.update=function() {
+  update() {
 
-}
+  }
 
-GameObject.prototype.remove=function() {
+  remove() {
+
+  }
 
 }

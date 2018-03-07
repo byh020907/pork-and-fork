@@ -7,12 +7,6 @@ function CircleCollision(owner,body){
 
 inherit(Collision,CircleCollision);
 
-CircleCollision.prototype.hitTest=function(collision){
-  if(collision instanceof CircleCollision)
-    return CirclevsCircle(this.owner.body,collision.owner.body);
-  if (collision instanceof PolygonCollision)
-    return CirclevsPolygon(this.owner.body, collision.owner.body);
-}
 
 function CirclevsCircle(m,A,B)
 {
@@ -38,7 +32,7 @@ function CirclevsCircle(m,A,B)
   {
     // Choose random (but consistent) values
     m.penetration = A.radius;
-    m.normal = new Vector2d(1,0);
+    m.normal.set(1,0);
     m.contacts[0].set(A.pos);
   }
   else// If distance between circles is not zero

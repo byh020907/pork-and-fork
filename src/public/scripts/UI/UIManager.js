@@ -11,6 +11,17 @@ UIManager.prototype.addPanel=function(panel){
   this.panels.push(panel);
 }
 
+UIManager.prototype.removePanel=function(panelId){
+  for(let i=0;i<this.panels.length;i++){
+    if(this.panels[i].id==panelId){
+      this.panels.splice(i, 1);
+      return;
+    }
+  }
+
+  console.error("존재하지않는 panel입니다.");
+}
+
 UIManager.prototype.render=function(display){
   for(var panel of this.panels){
     panel.render(display);
@@ -23,29 +34,35 @@ UIManager.prototype.update=function(){
   }
 }
 
-UIManager.prototype.keyDown=function(e){
-  //이벤트가 발생하지 않은 이유는 component가 uiPanel인 경우를 간과해서이다.
+//UITextField의 입력 커서 초기화를 위한 함수
+UIManager.prototype.mouseDown=function(e){
   for(var panel of this.panels){
-    this.loopComponent(panel,e);
+    this.loopComponent(panel,function(){
+      this.isFocus=false;
+    },e);
   }
 }
 
-UIManager.prototype.loopComponent=function(component,e){
+UIManager.prototype.keyDown=function(e){
+  //이벤트가 발생하지 않은 이유는 component가 uiPanel인 경우를 간과해서이다.
+  for(var panel of this.panels){
+    this.loopComponent(panel,UITextField.prototype.keyDown,e);
+  }
+}
+
+UIManager.prototype.loopComponent=function(component,func,e){
   if(component instanceof UIPanel){
     for(var c of component.components)
-      this.loopComponent(c,e);
+      this.loopComponent(c,func,e);
   }else{
     if(component instanceof UITextField)
-      component.keyDown(e);
+      Reflect.apply(func,component,[e]);
   }
 }
 
 UIManager.prototype.keyUp=function(e){
   for(var panel of this.panels){
-    for(var component of panel.components){
-      if(component instanceof UITextField)
-        component.keyUp(e);
-    }
+    this.loopComponent(panel,UITextField.prototype.keyUp,e);
   }
 }
 
@@ -89,6 +106,19 @@ class UIComponent extends GameObject{
   init(uiPanel){
     this.panel=uiPanel;
     this.collision.setPos(this.getX()+uiPanel.getWorldX(),this.getY()+uiPanel.getWorldY());
+  }
+
+  //0~1 사이의 수가 파라메터로 들어감//addComponent를 사용한 객체만 적용가능
+  setBound(sx,sy,fx,fy){
+    if(!this.panel){
+      console.error("panel에 소속된 component가 아닙니다.");
+    }
+    this.body.width=(fx-sx)*this.panel.body.width;
+    this.body.height=(fy-sy)*this.panel.body.height;
+    this.setX(sx*this.panel.body.width);
+    this.setY(sy*this.panel.body.height);
+    //collision 재설정
+    this.collision.setBound(this.getX()+this.panel.getWorldX(),this.getY()+this.panel.getWorldY(),this.body.width,this.body.height);
   }
 
   //Body의 pos는 실제 모델좌표의 중심, 실제 사용할때는 아래 메서드 사용하여 왼쪽상단의 좌표를 리턴해준다//UI는 무조건 왼쪽상단이 기준
@@ -163,6 +193,18 @@ class UIPanel extends UIComponent{
   addComponent(component){
     component.init(this);
     this.components.push(component);
+  }
+
+  removeComponent(componentId){
+    for(let i=0;i<this.components.length;i++){
+      if(this.components[i].id==componentId){
+        this.components.splice(i, 1);
+        console.log("remove"+componentId);
+        return;
+      }
+    }
+
+    console.error("존재하지않는 component입니다.");
   }
 
   getComponent(id){
