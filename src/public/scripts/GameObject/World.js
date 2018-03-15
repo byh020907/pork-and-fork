@@ -98,6 +98,16 @@ class World {
 
     addBody(body) {
         this.bodyList.push(body);
+        body.world=this;
+    }
+
+    removeBody(bodyId) {
+      for(let i=0;i<this.bodyList.length;i++){
+        if(this.bodyList[i].id==bodyId){
+          this.bodyList[i].world=null;//world 값 초기화
+          this.bodyList.splice(i,1);
+        }
+      }
     }
 
     clear() {

@@ -47,7 +47,7 @@ TitleState.prototype.init=function(){
 
     },
     released:function(uiButton){
-      gsm.setState(GameState.LOGIN_STATE);
+      gsm.setState(GameState.MAINGAME_STATE);
     }
   });
   startBtn.setText("Start");

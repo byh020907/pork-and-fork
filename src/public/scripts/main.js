@@ -39,6 +39,7 @@ function init(){
 }
 
 function gameLoop(){
+  Timer.updateTimer();
   //textCtx 초기화용
   display.update();
   update();

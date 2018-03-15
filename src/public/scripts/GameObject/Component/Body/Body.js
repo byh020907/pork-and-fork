@@ -3,6 +3,9 @@
 function Body(owner, vertices) {
   Component.apply(this, [owner]);
 
+  this.id=Math.random();
+  this.world=null;
+
   this.bound = new Rectangle(0,0,100,100);
   //텍스쳐 렌더링할대 쓰는 변수
   this.width = 100;

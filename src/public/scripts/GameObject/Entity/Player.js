@@ -25,6 +25,8 @@ class Player extends Entity{
 
     this.nose=new PigNose(this,200,0);
     this.nameTag=new GameText(this,name,0,-100);
+    this.costumes=[new Costume(this,0,0,new TextureModel(this,Sprite.PAF_LOGO))];
+    // this.costumes[0].isReverse=true;
 
     this.idleAni=new AnimationModel(this,Sprite.PAF_SHEET,0,17,949/4,143,4,30);
     this.idleAni.loop=true;
@@ -87,6 +89,26 @@ class Player extends Entity{
     this.idleAni.isFlipped=value;
     this.walkAni.isFlipped=value;
     this.nose.setFlip(value);
+    for(var costume of this.costumes){
+      costume.setFlip(value);
+    }
+  }
+
+  addCostume(costume){
+    this.costumes.push(costume);
+    this.body.world.removeBody(costume.body.id);
+    costume.isFixed=true;
+  }
+
+  removeCostume(){
+    //가장 위 코스튬을 제거한후 월드에 추가한다
+    var pop=this.costumes.pop();
+    this.body.world.addBody(pop.body);
+    pop.isFixed=false;
+  }
+
+  setNose(camera){
+      // mousePos.sub(new Vector2d(display.getWidth()/2,display.getHeight()/2)).add(camera.pos);
   }
 
   jump(amount){
@@ -117,17 +139,27 @@ class Player extends Entity{
     this.model.update();
     this.polygon.update();
     this.nose.update();
+    for(var costume of this.costumes){
+      costume.update();
+    }
     this.nameTag.update();
     this.isMoving=false;
   }
 
   render(pMtrx) {
     this.nose.render(pMtrx);
+    for(var costume of this.costumes){
+      costume.update();
+    }
     this.nameTag.render(pMtrx);
     super.render(pMtrx);
   }
 
   hitProcess(e){
+    if(e instanceof Costume&&--this.counter<=0){
+      this.addCostume(e);
+      this.counter=10;
+    }
     // if(e.tag=="ground")
       this.jumpCount=0;
     // this.model=this.hurtAni;

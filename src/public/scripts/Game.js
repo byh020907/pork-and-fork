@@ -2,7 +2,7 @@
 
 class Game{
   constructor(mgs){
-    this.mainGameState=gsm.list[GameState.MAINGAME_STATE];
+    this.mainGameState=mgs;
     this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
     this.player;
     this.players=[];
@@ -75,6 +75,10 @@ class Game{
     this.world=null;
   }
 
+  getWorldMousePos(){
+    return mousePos.sub(new Vector2d(display.getWidth()/2,display.getHeight()/2)).add(this.camera.pos);
+  }
+
   update(){
     this.camera.follow(this.player.body,0.05);
 
@@ -83,6 +87,19 @@ class Game{
     this.world.update();
 
     Entity.updateAll();
+
+    if(isMousePressed(1)){
+      for(let i=0;i<1;i++){
+        let c=new Circle(this.player.nose.body.pos.x,this.player.nose.body.pos.y,25);
+        c.body.angularVelocity=1.1;
+        c.body.setMass(1);
+        console.log(this.getWorldMousePos());
+        console.log(this.player.body.pos);
+        let v=this.getWorldMousePos().sub(this.player.nose.body.pos).normalize().scale(20);
+        c.body.applyForce(v);
+        this.world.addBody(c.body);
+      }
+    }
 
     if(isKeyDown(65)){
       this.player.move(Math.PI);
@@ -97,27 +114,7 @@ class Game{
     }
 
     if(isKeyPressed(32)){
-      // for(let i=0;i<5;i++){
-      //   let p=new Polygon(this.player.nose.body.pos.x,this.player.nose.body.pos.y);
-      //   p.setRegularPolygon(3,50);
-      //   p.body.angularVelocity=1;
-      //   p.body.setMass(4);
-      //   let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);
-      //   p.body.applyForce(v);
-      //   this.world.addBody(p.body);
-      // }
-      // for(let i=0;i<50;i++){
-      //   Particle.ObjectPool.alloc(Math.random()*100,Math.random()*100);
-      // }
 
-      for(let i=0;i<1;i++){
-        let c=new Circle(this.player.nose.body.pos.x,this.player.nose.body.pos.y,50);
-        c.body.angularVelocity=1.1;
-        // c.body.setMass(1);
-        let v=this.player.body.u.mul(this.player.nose.fixedPos).normalize().scale(50);
-        c.body.applyForce(v);
-        this.world.addBody(c.body);
-      }
     }
 
     //zoom

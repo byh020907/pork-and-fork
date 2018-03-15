@@ -6,7 +6,7 @@ class MainGameState{
   }
 
   init(){
-    this.game=new Game();
+    this.game=new Game(this);
     var game=this.game;
     this.game.init(/*this.receivedData.Users*/null);
     var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
@@ -60,6 +60,7 @@ class MainGameState{
       pressed: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.2);
         game.doAction(function(){
+          this.player.removeCostume();
         });
       },
       released: function(uiButton) {
