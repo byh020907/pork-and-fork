@@ -26,6 +26,25 @@ TitleState.prototype.init=function(){
     released:function(uiButton){}
   }));
 
+  var nameBackground=new UIComponent(Sprite.WHITE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50);
+
+  var nameText=new UITextField(Sprite.INPUT_LINE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50, {
+    entered: function(uiButton) {
+      uiButton.label.setColor(0,0,0,0.1);
+    },
+    exited: function(uiButton) {
+      uiButton.label.setColor(0,0,0,0.0);
+    },
+    pressed: function(uiButton) {
+      uiButton.label.setColor(0,0,0,0.2);
+      uiButton.isFocus=true;
+    },
+    released: function(uiButton) {
+      uiButton.label.setColor(0,0,0,0.1);
+    }
+  });
+  nameText.setText("EnterName");
+
   var startBtn=new UIButton(Sprite.BROWN,display.getWidth()/2-100,display.getHeight()/2+150,200,100,{
     entered:function(uiButton){
       uiButton.body.width=200/1.1;
@@ -47,11 +66,14 @@ TitleState.prototype.init=function(){
 
     },
     released:function(uiButton){
+      console.log(nameText.textLabel.text);
       gsm.setState(GameState.MAINGAME_STATE);
     }
   });
   startBtn.setText("Start");
 
+  mainPanel.addComponent(nameBackground);
+  mainPanel.addComponent(nameText);
   //start버튼
   mainPanel.addComponent(startBtn);
 

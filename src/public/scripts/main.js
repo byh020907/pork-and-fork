@@ -10,6 +10,7 @@ function init(){
   //투명색
   Sprite.VOID=new Sprite(new Texture(0,0,0,0),0,0,1,1);
   Sprite.HALF_VOID=new Sprite(new Texture(0,0,0,128),0,0,1,1);
+  Sprite.WHITE=new Sprite(new Texture(255,255,255,255),0,0,1,1);
 
   Sprite.TEXT=new Sprite(new Text());
 
@@ -24,7 +25,7 @@ function init(){
   Sprite.SLIGHTLY_GRAY=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),174,335,261,422,true);
   Sprite.GREEN=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),261,335,348,422,true);
   Sprite.BEIGE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),348,335,435,422,true);
-  Sprite.WHITE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),435,335,522,422,true);
+  // Sprite.WHITE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),435,335,522,422,true);
   Sprite.GRAY=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),522,335,609,422,true);
   Sprite.BROWN_ARROW=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),0,422,35,479,true);
   Sprite.INPUT_LINE=new Sprite(TextureLoader.get("images/P&F-Sprite.png"),35,422,629,479,true);
