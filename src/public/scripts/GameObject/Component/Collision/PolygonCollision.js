@@ -517,7 +517,8 @@ function CirclevsPolygon(m, A, B) {
 
     // Closest to face
     else {
-        let n = B.normal[faceNormalIndex];
+        let n=Vector2d.ObjectPool.alloc();
+        n.init(B.normal[faceNormalIndex]);
         if (center.sub(v1).dot(n) > A.radius)
             return;
         m.contactCount=1;
@@ -530,6 +531,7 @@ function CirclevsPolygon(m, A, B) {
         temp.addLocal(A.pos)
         m.contacts[0].set(temp);
         Vector2d.ObjectPool.free(temp);
+        Vector2d.ObjectPool.free(n);
     }
 }
 

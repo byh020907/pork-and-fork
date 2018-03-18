@@ -38,7 +38,8 @@ function Body(owner, vertices) {
 
 
   this.normal=[];
-  this.initNormal();
+  if(this.vertices!=null)//다각형이라면
+    this.initNormal();
 }
 
 inherit(Component, Body);
@@ -68,23 +69,23 @@ Body.prototype.initNormal=function(){
 }
 
 //각도는 적용하지않는다.
-Body.prototype.getNormal = function(index) {
-  var i = index;
-
-  let p1 = this.vertices[i];
-  // get the next vertex
-  let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
-
-  // subtract the two to get the edge vector
-  var edge = p1.sub(p2);
-
-  // ===== 1. 지금 교차하는지 본다 =====
-  // 지금 변에 수직인 축을 찾는다//시계방향
-  var axis = new Vector2d(-edge.y, edge.x);
-  axis.normalizeLocal();
-
-  return axis;
-}
+// Body.prototype.getNormal = function(index) {
+//   var i = index;
+//
+//   let p1 = this.vertices[i];
+//   // get the next vertex
+//   let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
+//
+//   // subtract the two to get the edge vector
+//   var edge = p1.sub(p2);
+//
+//   // ===== 1. 지금 교차하는지 본다 =====
+//   // 지금 변에 수직인 축을 찾는다//시계방향
+//   var axis = new Vector2d(-edge.y, edge.x);
+//   axis.normalizeLocal();
+//
+//   return axis;
+// }
 
 Body.prototype.getSupport = function(dir) {
   var bestProjection = -Number.MAX_VALUE;

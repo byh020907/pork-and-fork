@@ -4,6 +4,7 @@
 //               3.해상도 조절 자유롭게 되게만들기
 class TitleState extends GameState{
   constructor(){
+    super();
     this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
   }
 
@@ -88,7 +89,7 @@ class TitleState extends GameState{
       gsm.setState(GameState.MAINGAME_STATE);
     }
   }
-  
+
   render(display){
     uiManager.render(display);
   }

@@ -53,6 +53,12 @@ class Game{
     ground.setColor(0,0,0,0.5);
     this.world.addBody(ground.body);
 
+    var centerPoint=new Polygon(0,0);
+    centerPoint.setRegularPolygon(5,100);
+    centerPoint.setStatic();//setStatic은 항상 마지막에
+    centerPoint.setColor(0,0,0,0.5);
+    this.world.addBody(centerPoint.body);
+
     // let c=new Circle(0,0);
     // c.setRadius(50);
     // c.body.angularVelocity=0.1;

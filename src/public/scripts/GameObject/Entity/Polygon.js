@@ -91,7 +91,7 @@ class Polygon extends Entity{
       this.body.vertices[i]=vertices[i];
     }
     if(this.body.vertices.length>vertices.length)
-    this.body.vertices.splice(vertices.length,this.body.vertices.length);
+      this.body.vertices.splice(vertices.length,this.body.vertices.length);
 
     var verticesData=[];
     for(let i=0;i<this.model.vertices.length;i++){
@@ -109,6 +109,7 @@ class Polygon extends Entity{
     }
     this.model.shape.setIndices(indicesData);
 
+    this.body.initNormal();
     this.computeMass(this.body,this.density);
   };
 
