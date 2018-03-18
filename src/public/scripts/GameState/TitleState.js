@@ -2,93 +2,94 @@
 // 오늘해결할것-> 1.text출력의 일원화
 //               2.ui출력할때 정렬되는거 잘되게
 //               3.해상도 조절 자유롭게 되게만들기
-function TitleState(){
-  this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
-}
+class TitleState extends GameState{
+  constructor(){
+    this.camera=new Camera(new Vector2d(0,0),gl.viewportWidth,gl.viewportHeight);
+  }
 
-inherit(GameState,TitleState);
+  init(){
+    //투명 메인 판넬
+    var mainPanel=new UIPanel(Sprite.GREEN,0,0,display.getWidth(),display.getHeight());
 
-TitleState.prototype.init=function(){
-  //투명 메인 판넬
-  var mainPanel=new UIPanel(Sprite.GREEN,0,0,display.getWidth(),display.getHeight());
+    //메인 로고
+    mainPanel.addComponent(new UIButton(Sprite.PAF_LOGO,display.getWidth()/2-210,display.getHeight()/2-250,400,300,{
+      entered:function(uiButton){
+        // uiButton.body.width=200/1.5;
+        // uiButton.body.height=100/1.5;
+      },
+      exited:function(uiButton){
+        // uiButton.body.width=200;
+        // uiButton.body.height=100;
+      },
+      pressed:function(uiButton){},
+      released:function(uiButton){}
+    }));
 
-  //메인 로고
-  mainPanel.addComponent(new UIButton(Sprite.PAF_LOGO,display.getWidth()/2-210,display.getHeight()/2-250,400,300,{
-    entered:function(uiButton){
-      // uiButton.body.width=200/1.5;
-      // uiButton.body.height=100/1.5;
-    },
-    exited:function(uiButton){
-      // uiButton.body.width=200;
-      // uiButton.body.height=100;
-    },
-    pressed:function(uiButton){},
-    released:function(uiButton){}
-  }));
+    var nameBackground=new UIComponent(Sprite.WHITE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50);
 
-  var nameBackground=new UIComponent(Sprite.WHITE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50);
+    var nameText=new UITextField(Sprite.INPUT_LINE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50, {
+      entered: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.1);
+      },
+      exited: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.0);
+      },
+      pressed: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.2);
+        uiButton.isFocus=true;
+      },
+      released: function(uiButton) {
+        uiButton.label.setColor(0,0,0,0.1);
+      }
+    });
+    nameText.setText("EnterName");
 
-  var nameText=new UITextField(Sprite.INPUT_LINE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50, {
-    entered: function(uiButton) {
-      uiButton.label.setColor(0,0,0,0.1);
-    },
-    exited: function(uiButton) {
-      uiButton.label.setColor(0,0,0,0.0);
-    },
-    pressed: function(uiButton) {
-      uiButton.label.setColor(0,0,0,0.2);
-      uiButton.isFocus=true;
-    },
-    released: function(uiButton) {
-      uiButton.label.setColor(0,0,0,0.1);
-    }
-  });
-  nameText.setText("EnterName");
+    var startBtn=new UIButton(Sprite.BROWN,display.getWidth()/2-100,display.getHeight()/2+150,200,100,{
+      entered:function(uiButton){
+        uiButton.body.width=200/1.1;
+        uiButton.body.height=100/1.1;
+        uiButton.label.body.width=uiButton.body.width/1.1;
+        uiButton.label.body.height=uiButton.body.height/1.1;
+        uiButton.textLabel.body.width=uiButton.body.width/2/1.1;
+        uiButton.textLabel.body.height=uiButton.body.height/2/1.1;
+      },
+      exited:function(uiButton){
+        uiButton.body.width=200;
+        uiButton.body.height=100;
+        uiButton.label.body.width=uiButton.body.width;
+        uiButton.label.body.height=uiButton.body.height;
+        uiButton.textLabel.body.width=uiButton.body.width/2;
+        uiButton.textLabel.body.height=uiButton.body.height/2;
+      },
+      pressed:function(uiButton){
 
-  var startBtn=new UIButton(Sprite.BROWN,display.getWidth()/2-100,display.getHeight()/2+150,200,100,{
-    entered:function(uiButton){
-      uiButton.body.width=200/1.1;
-      uiButton.body.height=100/1.1;
-      uiButton.label.body.width=uiButton.body.width/1.1;
-      uiButton.label.body.height=uiButton.body.height/1.1;
-      uiButton.textLabel.body.width=uiButton.body.width/2/1.1;
-      uiButton.textLabel.body.height=uiButton.body.height/2/1.1;
-    },
-    exited:function(uiButton){
-      uiButton.body.width=200;
-      uiButton.body.height=100;
-      uiButton.label.body.width=uiButton.body.width;
-      uiButton.label.body.height=uiButton.body.height;
-      uiButton.textLabel.body.width=uiButton.body.width/2;
-      uiButton.textLabel.body.height=uiButton.body.height/2;
-    },
-    pressed:function(uiButton){
+      },
+      released:function(uiButton){
+        console.log(nameText.textLabel.text);
+        gsm.setState(GameState.MAINGAME_STATE);
+      }
+    });
+    startBtn.setText("Start");
 
-    },
-    released:function(uiButton){
-      console.log(nameText.textLabel.text);
+    mainPanel.addComponent(nameBackground);
+    mainPanel.addComponent(nameText);
+    //start버튼
+    mainPanel.addComponent(startBtn);
+
+    uiManager.addPanel(mainPanel);
+  }
+  reset(){
+    uiManager.clear();
+  }
+
+  update(){
+    uiManager.update();
+    if(isKeyPressed(32)){
       gsm.setState(GameState.MAINGAME_STATE);
     }
-  });
-  startBtn.setText("Start");
-
-  mainPanel.addComponent(nameBackground);
-  mainPanel.addComponent(nameText);
-  //start버튼
-  mainPanel.addComponent(startBtn);
-
-  uiManager.addPanel(mainPanel);
-}
-TitleState.prototype.reset=function(){
-  uiManager.clear();
-}
-
-TitleState.prototype.update=function(){
-  uiManager.update();
-  if(isKeyPressed(32)){
-    gsm.setState(GameState.MAINGAME_STATE);
   }
-}
-TitleState.prototype.render=function(display){
-  uiManager.render(display);
+  
+  render(display){
+    uiManager.render(display);
+  }
 }

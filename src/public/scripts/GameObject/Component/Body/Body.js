@@ -35,9 +35,37 @@ function Body(owner, vertices) {
 
   this.staticFriction = 0.5*2;
   this.dynamicFriction = 0.3*2;
+
+
+  this.normal=[];
+  this.initNormal();
 }
 
 inherit(Component, Body);
+
+Body.prototype.initNormal=function(){
+  var temp=Vector2d.ObjectPool.alloc();
+  temp.init(0,0);
+
+  for(let i=0;i<this.vertices.length;++i){
+    let p1 = this.vertices[i];
+    // get the next vertex
+    let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
+
+    // subtract the two to get the edge vector
+    temp.set(p1);
+    temp.subLocal(p2);
+
+    // ===== 1. 지금 교차하는지 본다 =====
+    // 지금 변에 수직인 축을 찾는다//시계방향
+    var axis = new Vector2d(-temp.y, temp.x);
+    axis.normalizeLocal();
+
+    this.normal[i]=axis;
+  }
+
+  Vector2d.ObjectPool.free(temp);
+}
 
 //각도는 적용하지않는다.
 Body.prototype.getNormal = function(index) {
