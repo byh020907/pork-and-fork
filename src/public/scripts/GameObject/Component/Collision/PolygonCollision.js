@@ -131,7 +131,7 @@ function findAxisLeastPenetration(faceIndex, A, B) {
         // Vec2 n = A->m_normals[i];
         // Vec2 nw = A->u * n;
         var n = Vector2d.ObjectPool.alloc();
-        n.init(A.getNormal(i));
+        n.init(A.normal[i]);
         var nw = Vector2d.ObjectPool.alloc();
         nw.init(A.u.mul(n));
 
@@ -186,7 +186,7 @@ function findAxisLeastPenetration(faceIndex, A, B) {
 
 function findIncidentFace(v, RefPoly, IncPoly, referenceIndex) {
   var referenceNormal = Vector2d.ObjectPool.alloc();
-  referenceNormal.init(RefPoly.getNormal(referenceIndex));
+  referenceNormal.init(RefPoly.normal[referenceIndex]);
 
     // Calculate normal in incident's frame of reference
     // referenceNormal = RefPoly->u * referenceNormal; // To world space
@@ -200,7 +200,7 @@ function findIncidentFace(v, RefPoly, IncPoly, referenceIndex) {
     var minDot = Number.MAX_VALUE;
     for (let i = 0; i < IncPoly.vertices.length; ++i) {
         // real dot = Dot( referenceNormal, IncPoly->m_normals[i] );
-        let dot = referenceNormal.dot(IncPoly.getNormal(i));
+        let dot = referenceNormal.dot(IncPoly.normal[i]);
 
         if (dot < minDot) {
             minDot = dot;
@@ -428,7 +428,7 @@ function CirclevsPolygon(m, A, B) {
         temp=Vector2d.ObjectPool.alloc();
         temp.init(center);
         temp.subLocal(B.vertices[i]);
-        let s = B.getNormal(i).dot( temp );
+        let s = B.normal[i].dot( temp );
         Vector2d.ObjectPool.free(temp);temp=null;
         // let s = B.getNormal(i).dot( center.sub( B.vertices[i] ) );
 
@@ -449,7 +449,7 @@ function CirclevsPolygon(m, A, B) {
         m.contactCount=1;
 
         temp=Vector2d.ObjectPool.alloc();
-        temp.init(B.getNormal(faceNormalIndex));
+        temp.init(B.normal[faceNormalIndex]);
         temp.scaleLocal(-1);
         m.normal.set(B.u.mul(temp));
         // m.normal.set(B.u.mul(B.getNormal(faceNormalIndex)).scale(-1));
@@ -517,7 +517,8 @@ function CirclevsPolygon(m, A, B) {
 
     // Closest to face
     else {
-        let n = B.getNormal(faceNormalIndex);
+        let n=Vector2d.ObjectPool.alloc();
+        n.init(B.normal[faceNormalIndex]);
         if (center.sub(v1).dot(n) > A.radius)
             return;
         m.contactCount=1;
@@ -530,6 +531,7 @@ function CirclevsPolygon(m, A, B) {
         temp.addLocal(A.pos)
         m.contacts[0].set(temp);
         Vector2d.ObjectPool.free(temp);
+        Vector2d.ObjectPool.free(n);
     }
 }
 

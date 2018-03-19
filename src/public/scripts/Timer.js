@@ -7,10 +7,12 @@
  */
 class Timer{
   constructor(){
-    this.counter=0;
+
   }
 
   static updateTimer(){
-    ++this.counter;
+    ++Timer.counter;
   }
 }
+
+Timer.counter=0;

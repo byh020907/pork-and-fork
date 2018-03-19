@@ -35,28 +35,57 @@ function Body(owner, vertices) {
 
   this.staticFriction = 0.5*2;
   this.dynamicFriction = 0.3*2;
+
+
+  this.normal=[];
+  if(this.vertices!=null)//다각형이라면
+    this.initNormal();
 }
 
 inherit(Component, Body);
 
-//각도는 적용하지않는다.
-Body.prototype.getNormal = function(index) {
-  var i = index;
+Body.prototype.initNormal=function(){
+  var temp=Vector2d.ObjectPool.alloc();
+  temp.init(0,0);
 
-  let p1 = this.vertices[i];
-  // get the next vertex
-  let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
+  for(let i=0;i<this.vertices.length;++i){
+    let p1 = this.vertices[i];
+    // get the next vertex
+    let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
 
-  // subtract the two to get the edge vector
-  var edge = p1.sub(p2);
+    // subtract the two to get the edge vector
+    temp.set(p1);
+    temp.subLocal(p2);
 
-  // ===== 1. 지금 교차하는지 본다 =====
-  // 지금 변에 수직인 축을 찾는다//시계방향
-  var axis = new Vector2d(-edge.y, edge.x);
-  axis.normalizeLocal();
+    // ===== 1. 지금 교차하는지 본다 =====
+    // 지금 변에 수직인 축을 찾는다//시계방향
+    var axis = new Vector2d(-temp.y, temp.x);
+    axis.normalizeLocal();
 
-  return axis;
+    this.normal[i]=axis;
+  }
+
+  Vector2d.ObjectPool.free(temp);
 }
+
+//각도는 적용하지않는다.
+// Body.prototype.getNormal = function(index) {
+//   var i = index;
+//
+//   let p1 = this.vertices[i];
+//   // get the next vertex
+//   let p2 = this.vertices[i + 1 == this.vertices.length ? 0 : i + 1];
+//
+//   // subtract the two to get the edge vector
+//   var edge = p1.sub(p2);
+//
+//   // ===== 1. 지금 교차하는지 본다 =====
+//   // 지금 변에 수직인 축을 찾는다//시계방향
+//   var axis = new Vector2d(-edge.y, edge.x);
+//   axis.normalizeLocal();
+//
+//   return axis;
+// }
 
 Body.prototype.getSupport = function(dir) {
   var bestProjection = -Number.MAX_VALUE;

@@ -25,7 +25,10 @@ class Player extends Entity{
 
     this.nose=new PigNose(this,200,0);
     this.nameTag=new GameText(this,name,0,-100);
-    this.costumes=[new Costume(this,0,0,new TextureModel(this,Sprite.PAF_LOGO))];
+    this.costumes=[
+      new Costume(this,0,0,new TextureModel(this,Sprite.PAF_LOGO)),
+      new Costume(this,0,0,new TextureModel(this,Sprite.CHECK)),
+    ];
     // this.costumes[0].isReverse=true;
 
     this.idleAni=new AnimationModel(this,Sprite.PAF_SHEET,0,17,949/4,143,4,30);
@@ -60,6 +63,7 @@ class Player extends Entity{
     // this.maxSpeed=15;
 
     this.isMoving=false;
+    this.counter=30;
   }
 
   get body(){
@@ -101,6 +105,10 @@ class Player extends Entity{
   }
 
   removeCostume(){
+    if(this.costumes.length<=0){
+      console.error("코스튬이 더이상 없습니다.");
+      return;
+    }
     //가장 위 코스튬을 제거한후 월드에 추가한다
     var pop=this.costumes.pop();
     this.body.world.addBody(pop.body);
@@ -158,7 +166,7 @@ class Player extends Entity{
   hitProcess(e){
     if(e instanceof Costume&&--this.counter<=0){
       this.addCostume(e);
-      this.counter=10;
+      this.counter=30;
     }
     // if(e.tag=="ground")
       this.jumpCount=0;
