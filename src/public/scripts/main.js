@@ -34,7 +34,7 @@ function init(){
 
   uiManager=new UIManager();
   gsm=new GameStateManager();
-  networkManager=new NetworkManager("wss://pnf.herokuapp.com/socket");
+  networkManager=new NetworkManager("wss://pig-pop-game.herokuapp.com/socket");
 
   gameLoop();
 }
