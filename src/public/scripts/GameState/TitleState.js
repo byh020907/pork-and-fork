@@ -9,6 +9,8 @@ class TitleState extends GameState{
   }
 
   init(){
+
+    var self = this;
     //투명 메인 판넬
     var mainPanel=new UIPanel(Sprite.GREEN,0,0,display.getWidth(),display.getHeight());
 
@@ -28,7 +30,7 @@ class TitleState extends GameState{
 
     var nameBackground=new UIComponent(Sprite.WHITE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50);
 
-    var nameText=new UITextField(Sprite.INPUT_LINE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50, {
+    this.nameText=new UITextField(Sprite.INPUT_LINE,display.getWidth()/2-200,display.getHeight()/2+50,400, 50, {
       entered: function(uiButton) {
         uiButton.label.setColor(0,0,0,0.1);
       },
@@ -43,7 +45,8 @@ class TitleState extends GameState{
         uiButton.label.setColor(0,0,0,0.1);
       }
     });
-    nameText.setText("EnterName");
+
+    this.nameText.setText("EnterName");
 
     var startBtn=new UIButton(Sprite.BROWN,display.getWidth()/2-100,display.getHeight()/2+150,200,100,{
       entered:function(uiButton){
@@ -66,14 +69,22 @@ class TitleState extends GameState{
 
       },
       released:function(uiButton){
-        console.log(nameText.textLabel.text);
-        gsm.setState(GameState.MAINGAME_STATE);
+        let name = self.nameText.textLabel.text;
+
+        if (name) {
+          networkManager.send({
+              'head': 'join_game_request',
+              'body': { name }
+          });
+        }
+
+        self.nameText.setText("");
       }
     });
     startBtn.setText("Start");
 
     mainPanel.addComponent(nameBackground);
-    mainPanel.addComponent(nameText);
+    mainPanel.addComponent(this.nameText);
     //start버튼
     mainPanel.addComponent(startBtn);
 
@@ -84,13 +95,33 @@ class TitleState extends GameState{
   }
 
   update(){
-    uiManager.update();
-    if(isKeyPressed(32)){
-      gsm.setState(GameState.MAINGAME_STATE);
+    let msg = networkManager.pollMessage();
+
+    if (msg != null) {
+      this.messageProcess(msg);
     }
+
+    uiManager.update();
   }
 
   render(display){
     uiManager.render(display);
+  }
+
+  messageProcess(message){
+    switch(message.head) {
+        case "join_game_response": {
+          if (message.body.result) {
+            let { clients } = message.body;
+            gsm.setState(GameState.MAINGAME_STATE, { clients });
+          }
+
+          break;
+        }
+
+        default: {
+          console.log("Unknown Protocol");
+        }
+    }
   }
 }
