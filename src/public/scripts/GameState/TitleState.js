@@ -113,7 +113,8 @@ class TitleState extends GameState{
             let name = this.nameText.textLabel.text;
             let { clients } = message.body;
 
-            gsm.setState(GameState.MAINGAME_STATE, { clients, name });
+            gsm.cookie.userName = name;
+            gsm.setState(GameState.MAINGAME_STATE, { clients });
           }
 
           this.nameText.setText("");

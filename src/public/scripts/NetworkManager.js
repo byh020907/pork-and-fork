@@ -21,6 +21,7 @@ class NetworkManager {
     //웹 소켓에서 메시지가 날라왔을 때 호출되는 이벤트
     this.socket.onmessage = function(message) {
       var data = JSON.parse(message.data);
+      console.log(data);
       self.buffer.push(data);
     };
 
@@ -39,6 +40,7 @@ class NetworkManager {
    *
    */
   send(json) {
+    console.log(json);
     let string=JSON.stringify(json);
     //웹소켓으로 textMessage객체의 값을 보낸다.
     this.socket.send(string);

@@ -16,7 +16,7 @@ class Game{
     this.camera.setZoom(new Vector2d(1,1));
     this.camera.setPos(new Vector2d(0,0));
 
-    this.player=new Player(this.mainGameState.receivedData.name, Math.random()*500-250,0);
+    this.player=new Player(gsm.cookie.userName, Math.random()*500-250,0);
     this.world.addBody(this.player.body);
     var ground=new Polygon(0,400);
     ground.setVertices([
@@ -137,6 +137,13 @@ class Game{
 
   messageProcess(message) {
     switch (message.head) {
+      case "quit_game_response": {
+        if (message.body.result) {
+          gsm.cookie.userName = "";
+          gsm.setState(GameState.TITLE_STATE);
+        }
+      }break;
+
       case "sync_character_report":{
         for(let p of this.players){
           let clientName = message.body['client_name'];
@@ -155,7 +162,7 @@ class Game{
           let clientName = message.body['client_name'];
 
           if(p.name==clientName) {
-            let {key, pressed} = message.body;
+            let { key, pressed } = message.body;
             p.keys[key] = pressed;
           }
         }
