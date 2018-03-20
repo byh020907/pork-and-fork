@@ -16,7 +16,7 @@ class Game{
     this.camera.setZoom(new Vector2d(1,1));
     this.camera.setPos(new Vector2d(0,0));
 
-    this.player=new Player("TempName",Math.random()*500-250,0);
+    this.player=new Player(this.mainGameState.receivedData.name, Math.random()*500-250,0);
     this.world.addBody(this.player.body);
     var ground=new Polygon(0,400);
     ground.setVertices([
@@ -136,21 +136,28 @@ class Game{
   }
 
   messageProcess(message) {
-    switch (message.Protocol) {
-
-      case "DataSyncReport":{
+    switch (message.head) {
+      case "sync_character_report":{
         for(let p of this.players){
-          if(p.name==message.UserID){
-            p.body.pos.set(message.Pos.x,message.Pos.y);
-            p.body.velocity.set(message.Velocity.x,message.Velocity.y);
+          let clientName = message.body['client_name'];
+
+          if(p.name==clientName){
+            let { position, velocity } = message.body;
+
+            p.body.pos.set(position.x, position.y);
+            p.body.velocity.set(velocity.x, velocity.y);
           }
         }
       }break;
 
-      case "UserInputReport":{
+      case "invoke_input_report":{
         for(let p of this.players){
-          if(p.name==message.UserID)
-            p.keys[message.KeyCode]=message.Value;
+          let clientName = message.body['client_name'];
+
+          if(p.name==clientName) {
+            let {key, pressed} = message.body;
+            p.keys[key] = pressed;
+          }
         }
       }break;
 

@@ -77,8 +77,6 @@ class TitleState extends GameState{
               'body': { name }
           });
         }
-
-        self.nameText.setText("");
       }
     });
     startBtn.setText("Start");
@@ -112,10 +110,13 @@ class TitleState extends GameState{
     switch(message.head) {
         case "join_game_response": {
           if (message.body.result) {
+            let name = this.nameText.textLabel.text;
             let { clients } = message.body;
-            gsm.setState(GameState.MAINGAME_STATE, { clients });
+
+            gsm.setState(GameState.MAINGAME_STATE, { clients, name });
           }
 
+          this.nameText.setText("");
           break;
         }
 
