@@ -7,8 +7,13 @@ class MainGameState extends GameState {
 
   init(){
     this.game=new Game(this);
+
     var game=this.game;
-    this.game.init(/*this.receivedData.Users*/null);
+
+    var players=this.receivedData.clients.filter(client => client.name !== gsm.cookie.userName);
+    players = players.map(client => new Player(client.name, Math.random()*500-250,0));
+
+    this.game.init(players, null);
     var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
 
     //메뉴창 버튼
