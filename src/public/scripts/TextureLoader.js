@@ -55,11 +55,11 @@
 
   }
 
-  w.TextureLoader=new TextureLoader(["images/blankImage.png",
-                  "images/cloud.png",
-                  "images/Pig1-Sheet.png",
-                  "images/P&F-Sprite.png",
-                  "images/circle.png"
+  w.TextureLoader=new TextureLoader(["/static/images/blankImage.png",
+                  "/static/images/cloud.png",
+                  "/static/images/Pig1-Sheet.png",
+                  "/static/images/P&F-Sprite.png",
+                  "/static/images/circle.png"
                 ],function(){
                   console.log("로딩 완료");
                   //main.js에 있다.

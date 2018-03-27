@@ -7,17 +7,19 @@ class Game{
     this.player;
     this.players=[];
     this.world=new World(new Rectangle(-1500,-1500,3000,3000));
-    this.timer=0;
 
     this.particles=[];
   }
 
-  init(users){
+  init(players){
     this.camera.setZoom(new Vector2d(1,1));
     this.camera.setPos(new Vector2d(0,0));
 
-    this.player=new Player("TempName",Math.random()*500-250,0);
+    this.player=new Player(gsm.cookie.userName, Math.random()*500-250,0);
+    this.players=players;
+
     this.world.addBody(this.player.body);
+
     var ground=new Polygon(0,400);
     ground.setVertices([
       new Vector2d(-1000,-50),
@@ -25,10 +27,12 @@ class Game{
       new Vector2d(1000,50),
       new Vector2d(-1000,50),
     ]);
+
     ground.setStatic();
     ground.setColor(0,0,0,0.5);
     ground.tag="ground";
     ground.body.rotateAngle=Math.PI*0.05;
+
     this.world.addBody(ground.body);
 
     ground=new Polygon(-1000,400);
@@ -59,6 +63,16 @@ class Game{
     centerPoint.setColor(0,0,0,0.5);
     this.world.addBody(centerPoint.body);
 
+    this.timer = setInterval(() => {
+      let { pos, velocity } = this.player.body;
+      let position = pos;
+
+      networkManager.send({
+        'head': 'sync_character_request',
+        'body': { position, velocity }
+      });
+    }, 100);
+
     // let c=new Circle(0,0);
     // c.setRadius(50);
     // c.body.angularVelocity=0.1;
@@ -77,6 +91,8 @@ class Game{
   }
 
   reset(){
+    clearInterval(this.timer);
+
     Entity.clear();
     this.world=null;
   }
@@ -95,7 +111,7 @@ class Game{
     Entity.updateAll();
 
     if(isMousePressed(1)){
-      for(let i=0;i<1;i++){
+      /* for(let i=0;i<1;i++){
         let c=new Circle(this.player.nose.body.pos.x,this.player.nose.body.pos.y,25);
         c.body.angularVelocity=1.1;
         c.body.setMass(1);
@@ -104,7 +120,7 @@ class Game{
         let v=this.getWorldMousePos().sub(this.player.nose.body.pos).normalize().scale(20);
         c.body.applyForce(v);
         this.world.addBody(c.body);
-      }
+      } */
     }
 
     if(isKeyDown(65)){
@@ -136,32 +152,63 @@ class Game{
   }
 
   messageProcess(message) {
-    switch (message.Protocol) {
+    switch (message.head) {
+      case "quit_game_response": {
+        if (message.body.result) {
+          gsm.cookie.userName = "";
+          gsm.setState(GameState.TITLE_STATE);
+        }
+      }break;
 
-      case "DataSyncReport":{
+      case "join_game_report": {
+          let { client } = message.body;
+          this.players.push(new Player(client.name,Math.random()*500-250,0));
+      }break;
+
+      case "sync_character_report":{
         for(let p of this.players){
-          if(p.name==message.UserID){
-            p.body.pos.set(message.Pos.x,message.Pos.y);
-            p.body.velocity.set(message.Velocity.x,message.Velocity.y);
+          let clientName = message.body['client_name'];
+
+          if(p.name===clientName){
+            let { position, velocity } = message.body;
+
+            p.body.pos.set(position.x, position.y);
+            p.body.velocity.set(velocity.x, velocity.y);
           }
         }
       }break;
 
-      case "UserInputReport":{
+      case "invoke_input_report":{
         for(let p of this.players){
-          if(p.name==message.UserID)
-            p.keys[message.KeyCode]=message.Value;
+          let clientName = message.body['client_name'];
+
+          if(p.name === clientName) {
+            let { key, pressed } = message.body;
+            p.keys[key] = pressed;
+          }
+        }
+      }break;
+
+      case "quit_game_report": {
+        let clientName = message.body['client_name'];
+
+        for (let p of this.players) {
+          if (clientName===p.name) {
+            console.log(`${p.name} quited`);
+
+            this.world.removeBody(p.body.id);
+            this.players = this.players.filter(m => m.name !== p.name);
+
+            break;
+          }
         }
       }break;
 
       default:console.log("UnknownProtocol",message);
-
     }
   }
 
   render(){
     Entity.renderAll(this.camera);
   }
-
-
 }

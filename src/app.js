@@ -4,7 +4,7 @@ var express=require('express');
 var app=express();
 var fs=require('fs');
 
-app.use(express.static('public'));
+app.use('/static', express.static('public'));
 
 app.get('/',function(req,res){
   fs.readFile('index.html',function(error,data){

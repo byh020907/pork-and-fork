@@ -26,8 +26,10 @@ class Player extends Entity{
     this.nose=new PigNose(this,200,0);
     this.nameTag=new GameText(this,name,0,-100);
     this.costumes=[
+      /*
       new Costume(this,0,0,new TextureModel(this,Sprite.PAF_LOGO)),
       new Costume(this,0,0,new TextureModel(this,Sprite.CHECK)),
+       */
     ];
     // this.costumes[0].isReverse=true;
 

@@ -1,14 +1,19 @@
 "use strict"
 
-class MainGameState{
+class MainGameState extends GameState {
   constructor(){
-    this.game;
+    super();
   }
 
   init(){
     this.game=new Game(this);
+
     var game=this.game;
-    this.game.init(/*this.receivedData.Users*/null);
+
+    var players=this.receivedData.clients.filter(client => client.name !== gsm.cookie.userName);
+    players = players.map(client => new Player(client.name, Math.random()*500-250,0));
+
+    this.game.init(players, null);
     var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());
 
     //메뉴창 버튼
@@ -34,7 +39,10 @@ class MainGameState{
           pressed: function(uiButton) {
             uiButton.label.setColor(0,0,0,0.2);
             mainPanel.removeComponent(menuPanel.id);
-            gsm.setState(GameState.TITLE_STATE);
+
+            networkManager.send({
+                'head': 'quit_game_request'
+            });
           },
           released: function(uiButton) {
             uiButton.label.setColor(0,0,0,0.1);
@@ -138,11 +146,15 @@ class MainGameState{
 
   update(){
     var msg=networkManager.pollMessage();
+
     if(msg!=null){
       this.messageProcess(msg);
     }
 
-    this.game.update();
+    if (this.game != null) {
+      this.game.update();
+    }
+
     uiManager.update();
   }
 
@@ -178,7 +190,7 @@ function search(camera,node){
   let h=node.bounds.getHeight();
   let x=node.bounds.getX()+w/2;
   let y=node.bounds.getY()+h/2;
-  camera.render(TextureLoader.get("images/blankImage.png"),x,y,w,h,0);
+  camera.render(TextureLoader.get("/static/images/blankImage.png"),x,y,w,h,0);
 
   for(let i=0;i<4;i++){
     search(camera,node.nodes[i]);
