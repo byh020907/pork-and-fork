@@ -12,7 +12,7 @@ class PigNose extends Entity{
     this.body.width=width;
     this.body.height=height;
 
-    this.extraAngle=0*Math.PI/180;
+    this.extraAngle=45*Math.PI/180;
 
     this.extraPos=new Vector2d(0,0);
 
@@ -64,12 +64,16 @@ class PigNose extends Entity{
     this.model.update();
     this.polygon.update();
     var p=this.owner.body.u.mul(this.fixedPos);
-    // this.extraPos.set(Math.cos(this.extraAngle)*this.body.width,Math.sin(this.extraAngle)*this.body.width);
-    // var e=this.owner.body.u.mul(this.extraPos);
-    this.body.pos.x=this.owner.body.pos.x+p.x;
-    this.body.pos.y=this.owner.body.pos.y+p.y;
-    if(this.model.isFlipped)
+    var a=this.body.rotateAngle;
+    this.extraPos.set(-this.body.width/2+(this.body.width/2)*Math.cos(a),0+(this.body.width/2)*Math.sin(a));
+    this.body.pos.x=this.owner.body.pos.x+p.x+this.extraPos.x;
+    this.body.pos.y=this.owner.body.pos.y+p.y+this.extraPos.y;
+    if(this.model.isFlipped){
+      this.extraPos.set(this.body.width/2-(this.body.width/2)*Math.cos(a),0-(this.body.width/2)*Math.sin(a));
+      this.body.pos.x=this.owner.body.pos.x+p.x+this.extraPos.x;
+      this.body.pos.y=this.owner.body.pos.y+p.y+this.extraPos.y;
       this.body.rotateAngle=Math.atan2(-p.y,-p.x)-this.extraAngle;
+    }
     else
       this.body.rotateAngle=Math.atan2(p.y,p.x)+this.extraAngle;
   }
