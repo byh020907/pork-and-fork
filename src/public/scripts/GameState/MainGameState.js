@@ -10,8 +10,8 @@ class MainGameState extends GameState {
 
     var game=this.game;
 
+    //자신을 제외한 유저 데이타 배열로 제공
     var players=this.receivedData.clients.filter(client => client.name !== gsm.cookie.userName);
-    players = players.map(client => new Player(client.name, Math.random()*500-250,0));
 
     this.game.init(players, null);
     var mainPanel=new UIPanel(null,0,0,display.getWidth(),display.getHeight());

@@ -16,9 +16,16 @@ class Game{
     this.camera.setPos(new Vector2d(0,0));
 
     this.player=new Player(gsm.cookie.userName, Math.random()*500-250,0);
-    this.players=players;
-
     this.world.addBody(this.player.body);
+
+    var ps=[];
+    for(let p of players){
+      let player=new Player(p.name, Math.random()*500-250,0);
+      this.world.addBody(player);
+      ps.push(player);
+    }
+    this.players=ps;
+
 
     var ground=new Polygon(0,400);
     ground.setVertices([
@@ -162,7 +169,9 @@ class Game{
 
       case "join_game_report": {
           let { client } = message.body;
-          this.players.push(new Player(client.name,Math.random()*500-250,0));
+          let p=new Player(client.name,Math.random()*500-250,0);
+          this.world.addBody(p.body);
+          this.players.push(p);
       }break;
 
       case "sync_character_report":{
@@ -197,6 +206,7 @@ class Game{
             console.log(`${p.name} quited`);
 
             this.world.removeBody(p.body.id);
+            p.remove();
             this.players = this.players.filter(m => m.name !== p.name);
 
             break;

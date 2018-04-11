@@ -24,7 +24,7 @@ function Display(width,height){
   //html body에 삽입
   document.body.appendChild(this.canvas);
 
-  this.textCanvas=document.createElement("canvas");;
+  this.textCanvas=document.createElement("canvas");
   this.textCanvas.style.position="absolute";
   this.textCanvas.style.left="0px";
   this.textCanvas.style.top="0px";
